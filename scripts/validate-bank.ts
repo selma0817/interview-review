@@ -1,0 +1,2 @@
+import {readFile} from 'node:fs/promises';import {parseBank} from '../src/lib/questionBank';
+try{const bank=parseBank(JSON.parse(await readFile(new URL('../public/questions.json',import.meta.url),'utf8')));console.log(`Valid bank: ${bank.questions.length} questions, ${new Set(bank.questions.map(q=>q.topic)).size} topics, ${new Set(bank.questions.map(q=>q.type)).size} types.`)}catch(error){console.error(error);process.exitCode=1}

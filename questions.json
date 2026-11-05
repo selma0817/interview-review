@@ -1,0 +1,917 @@
+{
+  "schema_version": "1.0.0",
+  "title": "CS Knowledge Base — Starter Interview Questions",
+  "created_date": "2026-11-05",
+  "source_repository": "https://github.com/selma0817/cs-knowledge-base",
+  "source_commit": "160d470adc78cc4513d81b23e82c1a1747f0ff40",
+  "generation_method": "Generated in this ChatGPT conversation from nine retrieved notes; no external paid inference API used.",
+  "review_status": "draft_for_user_review",
+  "questions": [
+    {
+      "id": "go-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "An open buffered channel has capacity 2 and already holds 2 values. A goroutine sends another value, with no receiver currently running. What happens?",
+      "answer": "B",
+      "explanation": "A full buffer makes a send wait; capacity is fixed. Fullness alone does not cause a panic.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Buffered channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "The oldest value is overwritten."
+        },
+        {
+          "id": "B",
+          "text": "The sender blocks until space becomes available."
+        },
+        {
+          "id": "C",
+          "text": "The send immediately panics."
+        },
+        {
+          "id": "D",
+          "text": "The channel grows automatically."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "go-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Two receive cases in a Go select are both ready. There is no other code affecting readiness. Which statement is correct?",
+      "answer": "D",
+      "explanation": "select executes one selected case, not all ready cases. Source order does not assign priority.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "select",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "The first case in source order always wins."
+        },
+        {
+          "id": "B",
+          "text": "Both case bodies execute."
+        },
+        {
+          "id": "C",
+          "text": "The case whose channel was created first wins."
+        },
+        {
+          "id": "D",
+          "text": "One ready case is chosen pseudo-randomly."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "go-003",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Two workers are registered with a WaitGroup before launch. Each prints its own label and then calls Done. Main calls Wait and then prints 'done'. What is guaranteed?",
+      "answer": "A",
+      "explanation": "Wait provides a completion barrier. It does not order the workers or limit concurrency.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/sync.WaitGroup.md",
+          "heading": "WaitGroup guarantees completion, not ordering",
+          "blob_sha": "a07d1633ad34eaf799cd25b7de502b743dc908ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/sync.WaitGroup.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Both worker labels precede 'done', but their relative order is unspecified."
+        },
+        {
+          "id": "B",
+          "text": "Workers print in launch order."
+        },
+        {
+          "id": "C",
+          "text": "Only one worker can execute at a time."
+        },
+        {
+          "id": "D",
+          "text": "Wait cancels whichever worker finishes last."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "raft-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Raft",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A voter ends at (lastLogTerm=4, lastLogIndex=100). A candidate ends at (5, 80). Considering only log freshness, is the candidate eligible?",
+      "answer": "C",
+      "explanation": "Raft compares last-log term first and index only on a tie. Passing freshness alone does not guarantee a vote.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Log Freshness and Leader Eligibility.md",
+          "heading": "The log freshness comparison",
+          "blob_sha": "61fc4242e61fc65344eca6481152344ab10d70c7",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Log%20Freshness%20and%20Leader%20Eligibility.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "No, because 80 is less than 100."
+        },
+        {
+          "id": "B",
+          "text": "Only if its current election term is exactly 5."
+        },
+        {
+          "id": "C",
+          "text": "Yes: the higher last-log term wins the comparison."
+        },
+        {
+          "id": "D",
+          "text": "No, because both fields must be greater."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "raft-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Raft",
+      "difficulty": "hard",
+      "language": "en",
+      "question": "A term-7 leader observes an uncommitted term-6 entry on a majority. It has not yet committed a term-7 entry after it. Can it newly commit that old entry solely by counting these replicas?",
+      "answer": "B",
+      "explanation": "The leader's direct replica-counting rule requires a current-term entry. Older entries can become committed as part of its prefix.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why direct commitment requires the current term",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Yes; a majority is sufficient regardless of entry term."
+        },
+        {
+          "id": "B",
+          "text": "No; commit a current-term entry on a majority to commit the preceding prefix indirectly."
+        },
+        {
+          "id": "C",
+          "text": "Only if the oldest follower has applied it."
+        },
+        {
+          "id": "D",
+          "text": "Yes, if its local log is the longest."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "raft-003",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Raft",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A Raft peer has lastApplied=3 and commitIndex=6. Which entries should a single sequential applier deliver next?",
+      "answer": "D",
+      "explanation": "The shared-state predicate represents pending work; one wake-up can trigger delivery of multiple entries.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why one signal can apply many entries",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Only entry 6."
+        },
+        {
+          "id": "B",
+          "text": "Entries 1 through 6 again."
+        },
+        {
+          "id": "C",
+          "text": "None until a signal is received for each entry."
+        },
+        {
+          "id": "D",
+          "text": "Entries 4, 5, and 6 in order."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "db-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "An InnoDB table has PRIMARY KEY(id) and a secondary INDEX(email). Which query is covered by the secondary index's stored columns?",
+      "answer": "C",
+      "explanation": "The secondary index contains email and the primary key id. name requires data not stored in this index; optimizer selection and MVCC details are separate concerns.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Covering index",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "SELECT name FROM users WHERE email = ?"
+        },
+        {
+          "id": "B",
+          "text": "SELECT * FROM users WHERE email = ? (the table also contains name)"
+        },
+        {
+          "id": "C",
+          "text": "SELECT id, email FROM users WHERE email = ?"
+        },
+        {
+          "id": "D",
+          "text": "SELECT name, id FROM users WHERE email = ?"
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "db-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A table already has many indexes. What is the main tradeoff of adding another index for a read query?",
+      "answer": "A",
+      "explanation": "An additional access path consumes storage and must be maintained when relevant data changes. Its value depends on the workload.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Index design principles",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Potentially faster reads, but more storage and maintenance for writes affecting that index."
+        },
+        {
+          "id": "B",
+          "text": "Faster reads and writes with no storage cost."
+        },
+        {
+          "id": "C",
+          "text": "It changes the table's transaction isolation level."
+        },
+        {
+          "id": "D",
+          "text": "It removes the need for statistics."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "net-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Networking",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "A sender writes 'ABC' and then 'DEF' over a TCP connection. Which receive pattern is valid, assuming all six bytes arrive successfully?",
+      "answer": "D",
+      "explanation": "TCP exposes a byte stream. Applications must reconstruct messages independently of individual reads.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "A stream is continuous bytes",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Only two reads: 'ABC', then 'DEF'."
+        },
+        {
+          "id": "B",
+          "text": "Only one read: 'ABCDEF'."
+        },
+        {
+          "id": "C",
+          "text": "Any order, including 'DEFABC'."
+        },
+        {
+          "id": "D",
+          "text": "For example 'AB', then 'CDEF'; byte order is preserved, write boundaries are not."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "net-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Networking",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A protocol separates messages with newline characters. Message bodies may also contain newlines. What must the protocol do?",
+      "answer": "B",
+      "explanation": "Buffer size and timing do not remove ambiguity. The framing rule must distinguish data from delimiters.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Message framing",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rely on TCP packet boundaries."
+        },
+        {
+          "id": "B",
+          "text": "Define escaping or use another unambiguous framing rule."
+        },
+        {
+          "id": "C",
+          "text": "Insert a sleep between writes."
+        },
+        {
+          "id": "D",
+          "text": "Use a larger receive buffer."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "rag-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "RAG",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Why does Reciprocal Rank Fusion combine ranks rather than directly adding BM25 scores and embedding similarities?",
+      "answer": "C",
+      "explanation": "RRF combines reciprocal rank contributions without requiring raw-score calibration. It provides no correctness guarantee.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Fusion: Reciprocal Rank Fusion (RRF)",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ranks encode the complete semantic meaning of documents."
+        },
+        {
+          "id": "B",
+          "text": "All retrievers already produce identical score distributions."
+        },
+        {
+          "id": "C",
+          "text": "Raw scores can have incompatible scales, while ranks provide a common combination scheme."
+        },
+        {
+          "id": "D",
+          "text": "RRF guarantees that the top result is correct."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "rag-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "RAG",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A first-stage retriever omits the only relevant passage from its top-100. Can a reranker restricted to those 100 passages recover it?",
+      "answer": "A",
+      "explanation": "A reranker reorders its supplied candidates. Missing candidates are a first-stage recall problem.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Reranking.md",
+          "heading": "The two-stage pattern",
+          "blob_sha": "3acd7d1b509c6ec6c21ef20282ee2dd7dc561ee3",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Reranking.md"
+        }
+      ],
+      "review_status": "draft",
+      "options": [
+        {
+          "id": "A",
+          "text": "No; the missing passage must first enter the candidate set."
+        },
+        {
+          "id": "B",
+          "text": "Yes; reranking automatically searches the whole corpus."
+        },
+        {
+          "id": "C",
+          "text": "Yes, if its score exceeds 1."
+        },
+        {
+          "id": "D",
+          "text": "Only by using a larger generation context window."
+        }
+      ],
+      "grading": "exact_option_id"
+    },
+    {
+      "id": "go-004",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "What does ok=false mean in v, ok := <-ch?",
+      "answer": "The channel is closed and its buffered values have all been received; v is the element type's zero value.",
+      "explanation": "Closing does not discard buffered values. Those values are received with ok=true before closed-and-drained receives return ok=false.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Receiving from a closed channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "raft-004",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Raft",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "What is the distinction between commitIndex and lastApplied?",
+      "answer": "commitIndex tracks the highest entry known locally to be committed; lastApplied tracks local application progress.",
+      "explanation": "Commitment and application are different stages. Committed entries may still await delivery or execution by the local state machine.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Four different stages",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "db-003",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Database indexing",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "What is a back-to-table lookup when using an InnoDB secondary index?",
+      "answer": "Use the primary key found in the secondary index to look up the full row in the clustered index.",
+      "explanation": "It is needed for requested columns absent from the secondary index. A logical lookup need not be a physical disk read if pages are cached.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "回表 (back-to-table)",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "net-003",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Networking",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "Does UDP preserving datagram boundaries imply reliable, ordered delivery?",
+      "answer": "No. Datagram boundaries and delivery guarantees are separate properties.",
+      "explanation": "UDP does not itself guarantee delivery, ordering, or uniqueness.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Stream sockets versus datagram sockets",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "rag-003",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "RAG",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "Why combine sparse and dense retrieval?",
+      "answer": "Sparse retrieval is useful for exact terms and identifiers; dense retrieval can match semantically related paraphrases.",
+      "explanation": "Their strengths are complementary. Improvement must be measured rather than assumed for every query.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Dense vs sparse",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "rag-004",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "RAG",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "How does a typical cross-encoder reranker differ from a bi-encoder retriever?",
+      "answer": "A bi-encoder encodes query and document separately; a cross-encoder processes the pair jointly.",
+      "explanation": "Precomputed document embeddings make first-stage search efficient. Joint scoring spends more query-time computation on a smaller candidate set.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Reranking.md",
+          "heading": "Bi-encoder vs cross-encoder",
+          "blob_sha": "3acd7d1b509c6ec6c21ef20282ee2dd7dc561ee3",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Reranking.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "react-001",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "React state",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "Why does console.log(count) immediately after setCount(count + 1) read the old count?",
+      "answer": "The handler retains the state snapshot from the render that created it. The setter queues an update rather than mutating that local binding.",
+      "explanation": "A later render receives the updated state; the already-running handler keeps its original binding.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "What a setter does",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "react-002",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "React state",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "When would a request counter belong in useRef rather than useState?",
+      "answer": "When callbacks need a persistent, mutable latest counter but changing it should not itself update the UI.",
+      "explanation": "A ref's current property can be read at callback execution time. State remains appropriate for data displayed by the UI.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Pattern: newest-request token",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment"
+    },
+    {
+      "id": "go-005",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "language": "en",
+      "question": "What does this complete program print?\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    ch := make(chan int, 1)\n    ch <- 7\n    close(ch)\n    a, okA := <-ch\n    b, okB := <-ch\n    fmt.Println(a, okA, b, okB)\n}\n```",
+      "answer": "7 true 0 false",
+      "explanation": "The buffered 7 is drained first. Only the next receive observes closed-and-empty.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Receiving from a closed channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "go",
+      "rubric": [
+        "Preserves the buffered value.",
+        "Distinguishes ok=true from ok=false."
+      ]
+    },
+    {
+      "id": "go-006",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Is 'worker' guaranteed to print before this complete program exits? Identify the bug and fix it.\n\n```go\npackage main\nimport (\"fmt\"; \"sync\")\nfunc main() {\n    var wg sync.WaitGroup\n    go func() {\n        wg.Add(1)\n        defer wg.Done()\n        fmt.Println(\"worker\")\n    }()\n    wg.Wait()\n}\n```",
+      "answer": "No. Move wg.Add(1) before launching the goroutine.",
+      "explanation": "Wait can see a zero counter before the worker is scheduled and return immediately. Scheduling may also let the worker print, so there is no single guaranteed output.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/sync.WaitGroup.md",
+          "heading": "Add before starting the goroutine",
+          "blob_sha": "a07d1633ad34eaf799cd25b7de502b743dc908ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/sync.WaitGroup.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "go",
+      "rubric": [
+        "Explains the zero-counter schedule.",
+        "Moves Add before go.",
+        "Does not claim it always fails."
+      ]
+    },
+    {
+      "id": "go-007",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Does this complete program terminate normally? Explain and suggest a structural fix.\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    jobs := make(chan int)\n    results := make(chan int)\n    go func() {\n        for j := range jobs { results <- j * 2 }\n        close(results)\n    }()\n    jobs <- 1\n    jobs <- 2\n    close(jobs)\n    for r := range results { fmt.Println(r) }\n}\n```",
+      "answer": "No. Main blocks sending job 2 while the worker blocks sending result 2. Send jobs and close jobs in a separate producer goroutine while main consumes results.",
+      "explanation": "With one worker and unbuffered channels, neither side can reach its next receive. The sole worker may close results after jobs is drained because no other result sender exists.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Deadlock pattern: main sends all jobs before receiving results",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "go",
+      "rubric": [
+        "Identifies both blocking sends.",
+        "Enables concurrent production and result consumption.",
+        "Preserves safe channel closure."
+      ]
+    },
+    {
+      "id": "react-003",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "React state",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Assume count is 0 in the render that created this click handler, and no other updates occur. What count appears after this handler's updates are processed?\n\n```tsx\nfunction handleClick() {\n  setCount(c => c + 1);\n  setCount(count + 10);\n  setCount(c => c * 2);\n}\n```",
+      "answer": "20",
+      "explanation": "The queue transforms 0 to 1, replaces it with 10 computed from the handler's snapshot, then transforms 10 to 20.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Value vs updater function",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "tsx",
+      "rubric": [
+        "Traces 0 → 1 → 10 → 20.",
+        "Explains replacement versus updater semantics."
+      ]
+    },
+    {
+      "id": "react-004",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "React state",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Assume count=0 in this render, no other updates, and all calls occur in one click handler. What state follows? How can the handler increment three times?\n\n```tsx\nfunction handleClick() {\n  setCount(count + 1);\n  setCount(count + 1);\n  setCount(count + 1);\n}\n```",
+      "answer": "The next count is 1. Use three setCount(c => c + 1) calls to produce 3.",
+      "explanation": "All three value expressions read the same 0 snapshot and enqueue replacement with 1. Functional updaters consume the queued prior result.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Value vs updater function",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "tsx",
+      "rubric": [
+        "Answers 1 for the original.",
+        "Uses functional updaters.",
+        "Does not infer one render per setter."
+      ]
+    },
+    {
+      "id": "db-004",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "An InnoDB table has a regular B-tree index on a DATETIME column created_at, with no functional index. Rewrite this predicate as a half-open range for the same calendar day. Assume all values and literals use the same time convention.\n\n```sql\nSELECT id FROM events\nWHERE DATE(created_at) = '2026-11-04';\n```",
+      "answer": "SELECT id FROM events\nWHERE created_at >= '2026-11-04 00:00:00'\n  AND created_at <  '2026-11-05 00:00:00';",
+      "explanation": "The rewrite exposes a range on the indexed column and includes fractional seconds before midnight. It enables an access path but does not force the optimizer to choose it.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Applied patterns",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "code_language": "sql",
+      "rubric": [
+        "Inclusive start.",
+        "Exclusive next-day boundary.",
+        "Does not promise a particular execution plan."
+      ]
+    },
+    {
+      "id": "raft-005",
+      "version": 1,
+      "type": "short_answer",
+      "topic": "Raft",
+      "difficulty": "hard",
+      "language": "en",
+      "question": "Your Raft applier holds rf.mu while sending to an unbuffered applyCh. The application is slow to receive. Explain the risk and describe a safer single-applier sequence.",
+      "answer": "The send can block while holding the mutex, preventing handlers from acquiring it. Under the lock, choose and copy the next committed entry; unlock, deliver it, then reacquire the lock to record delivery progress.",
+      "explanation": "A single applier preserves ordered delivery while allowing consensus handlers to make progress. Coordinate this design with shutdown and snapshot handling; successful channel delivery is not necessarily completed application execution.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why unlock before sending on `applyCh`",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "rubric": [
+        "Identifies blocked send plus held mutex.",
+        "Copies data while protected.",
+        "Unlocks before delivery.",
+        "Preserves one ordered applier and distinguishes delivery from execution."
+      ]
+    },
+    {
+      "id": "go-008",
+      "version": 1,
+      "type": "short_answer",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Design the shutdown sequence for a finite worker pool: one producer, several workers, and one result consumer. Who closes jobs and results, and why?",
+      "answer": "The producer closes jobs after its final send. Workers drain jobs and finish their result sends, then signal completion. A coordinator waits for all workers and closes results; the consumer drains results concurrently.",
+      "explanation": "Closing results after all senders finish avoids send-on-closed-channel panics. Concurrent consumption avoids circular blocking; closing jobs lets workers exit their range loops.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Why close `results` after `wg.Wait()`",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "rubric": [
+        "Producer closes jobs.",
+        "All workers finish sending before results closes.",
+        "Consumer drains concurrently.",
+        "Does not require output order to match job order."
+      ]
+    },
+    {
+      "id": "rag-005",
+      "version": 1,
+      "type": "short_answer",
+      "topic": "RAG",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "A CS-note search misses both exact error codes and paraphrased concepts. Propose a retrieval pipeline and explain how you would evaluate it.",
+      "answer": "Retrieve with BM25 and embeddings, fuse their ranked candidates, rerank a bounded candidate set, then send selected passages to the generator. Evaluate candidate recall and final ranking on labeled queries, including both query types.",
+      "explanation": "Fusion addresses complementary matching behavior; reranking focuses the context. Compare against each retriever alone, track latency, and do not assume the extra stages always improve quality.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Where it fits",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "rubric": [
+        "Uses complementary sparse and dense retrieval.",
+        "Combines results before reranking.",
+        "Measures recall and ranking with labeled queries.",
+        "Considers latency and baselines."
+      ],
+      "extension_note": "Evaluation rubric extends the source's architecture discussion; it is not quoted from the note."
+    },
+    {
+      "id": "net-004",
+      "version": 1,
+      "type": "short_answer",
+      "topic": "Networking",
+      "difficulty": "medium",
+      "language": "en",
+      "question": "Design a receiver for a persistent TCP protocol with a 4-byte unsigned big-endian length followed by that many body bytes. How should it handle fragmented reads and multiple messages arriving together?",
+      "answer": "Accumulate bytes; wait for four header bytes; decode and validate length against a configured maximum; wait for the complete body; emit that message and continue parsing remaining bytes. Retain incomplete input for later reads.",
+      "explanation": "Neither header nor body must arrive in one read. EOF with an incomplete frame is truncation, and untrusted lengths must be bounded before large allocations.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Message framing",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "review_status": "draft",
+      "grading": "self_assessment",
+      "rubric": [
+        "Buffers incomplete headers and bodies.",
+        "Handles multiple frames per read.",
+        "Validates length before allocation.",
+        "Treats premature EOF as incomplete framing."
+      ],
+      "extension_note": "The 4-byte encoding is a concrete exercise built from the note's length-prefix concept."
+    }
+  ]
+}

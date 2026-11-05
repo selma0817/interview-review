@@ -1,0 +1,37 @@
+{
+  "name": "cs-review",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "validate:bank": "node --import tsx scripts/validate-bank.ts",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "build": "npm run typecheck && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "5.1.2",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-markdown": "latest",
+    "remark-gfm": "latest",
+    "vite": "7.3.7",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "latest",
+    "@testing-library/jest-dom": "latest",
+    "@testing-library/react": "latest",
+    "@testing-library/user-event": "latest",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "jsdom": "26.1.0",
+    "tsx": "latest",
+    "typescript": "latest",
+    "vitest": "3.2.4"
+  }
+}

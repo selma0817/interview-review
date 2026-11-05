@@ -1,0 +1,12 @@
+export type QuestionType = 'single_choice'|'flashcard'|'code_reading'|'short_answer';
+export type Source = {path:string;heading:string;blob_sha:string;url:string};
+export type CommonQuestion = {id:string;version:number;topic:string;difficulty:'easy'|'medium'|'hard';language:string;question:string;answer:string;explanation:string;sources:Source[];review_status:string;rubric?:string[];extension_note?:string;code_language?:string};
+export type Question = CommonQuestion & ({type:'single_choice';grading:'exact_option_id';options:{id:string;text:string}[]}|{type:'flashcard'|'code_reading'|'short_answer';grading:'self_assessment'});
+export type Bank = {schema_version:'1.0.0';title:string;created_date:string;source_repository:string;source_commit:string;generation_method:string;review_status:string;questions:Question[];[key:string]:unknown};
+export type QuestionRecord = {attempts:number;correct:number;incorrect:number;completed:boolean;needsReview:boolean;latestTimestamp:string;latestOutcome:'correct'|'incorrect'|'revealed'};
+export type Visit = {selected?:string;submitted?:boolean;revealed?:boolean};
+export type SessionKind = 'new'|'review';
+export type Session = {id:string;kind:SessionKind;queue:{id:string;version:number}[];cursor:number;visits:Record<string,Visit>;finished:boolean};
+export type Settings = {topics:string[];types:QuestionType[]};
+export type Progress = {storageVersion:1;bankIdentity:string;sourceCommit:string;records:Record<string,QuestionRecord>;settings:Settings;session?:Session};
+export const keyOf=(id:string,version:number)=>`${id}@${version}`;

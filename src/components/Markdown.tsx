@@ -1,0 +1,2 @@
+import ReactMarkdown from 'react-markdown';import remarkGfm from 'remark-gfm';
+export function Markdown({children}:{children:string}){return <ReactMarkdown remarkPlugins={[remarkGfm]} components={{a:({href,...props})=>{const safe=href&&/^https?:\/\//i.test(href);return safe?<a {...props} href={href} target="_blank" rel="noopener noreferrer"/>:<span>{props.children}</span>}}}>{children}</ReactMarkdown>}
