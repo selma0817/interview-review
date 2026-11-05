@@ -1,5 +1,14 @@
 # Interview Concepts Review
 
+**[Try it live → selma0817.github.io/interview-review](https://selma0817.github.io/interview-review/)**
+
+A quiz-style refresher for technical interview concepts, generated from my Obsidian notes in [cs-knowledge-base](https://github.com/selma0817/cs-knowledge-base).
+
+<p>
+  <img src="docs/screenshot-progress.png" alt="Progress screen with per-topic completion" width="49%">
+  <img src="docs/screenshot-question.png" alt="Answered Raft multiple-choice question with feedback" width="49%">
+</p>
+
 A local-first React/Vite interview refresher. It loads the supplied static question bank, supports all four bank question types, and stores progress only in this browser. There is no backend or account sync.
 
 The setup page shows overall and per-topic completion. Use **Practice new questions** for unseen questions or **Review marked questions** for questions you explicitly marked. Both respect the selected topics/types and shuffle once when the session starts; a saved session keeps its order. Multiple-choice submissions track correct and incorrect history. Every other type uses the same flashcard-style **Show solution** interaction. Submitting or revealing marks a question completed, while the reversible **Needs review** control is independent of correctness.
