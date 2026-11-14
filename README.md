@@ -2,16 +2,19 @@
 
 **[Try it live → selma0817.github.io/interview-review](https://selma0817.github.io/interview-review/)**
 
-A quiz-style refresher for technical interview concepts, generated from my Obsidian notes in [cs-knowledge-base](https://github.com/selma0817/cs-knowledge-base).
+A spaced-repetition refresher for technical interview concepts, generated from my Obsidian notes in [cs-knowledge-base](https://github.com/selma0817/cs-knowledge-base).
 
 <p>
-  <img src="docs/screenshot-progress.png" alt="Progress screen with per-topic completion" width="49%">
-  <img src="docs/screenshot-question.png" alt="Answered Raft multiple-choice question with feedback" width="49%">
+  <img src="docs/screenshot-home.png" alt="Home screen with today's due and new counts per topic" width="49%">
+  <img src="docs/screenshot-question.png" alt="Answered Raft multiple-choice question with Hard, Good and Easy ratings" width="49%">
 </p>
 
-A local-first React/Vite interview refresher. It loads the supplied static question bank, supports all four bank question types, and stores progress only in this browser. There is no backend or account sync.
+A local-first React/Vite app. It loads a static card bank, supports all four card types, and schedules reviews with [FSRS](https://github.com/open-spaced-repetition/ts-fsrs) (the algorithm Anki uses) entirely in this browser. There is no backend or account sync. The design is in [`learning-loop-v2-spec.md`](learning-loop-v2-spec.md).
 
-The setup page shows overall and per-topic completion. Use **Practice new questions** for unseen questions or **Review marked questions** for questions you explicitly marked. Both respect the selected topics/types and shuffle once when the session starts; a saved session keeps its order. Multiple-choice submissions track correct and incorrect history. Every other type uses the same flashcard-style **Show solution** interaction. Submitting or revealing marks a question completed, while the reversible **Needs review** control is independent of correctness.
+- **Today** shows the cards due today plus up to 10 new cards a day. **Start today's review** runs due cards first (earliest due first), then new ones.
+- **Rating:** after showing a solution, rate the card **Again / Hard / Good / Easy**; each button shows when the card comes back. A wrong multiple-choice answer counts as **Again** automatically; a right one asks for Hard, Good or Easy.
+- **Learning steps:** a card in its short learning steps (1 or 10 minutes) comes back at the end of the same session.
+- **Practice a topic** picks cards by topic and type regardless of schedule, weakest recall first. Those ratings count normally; FSRS adjusts for reviewing early.
 
 ## Local development
 
@@ -75,4 +78,6 @@ The CI workflow runs on pull requests and pushes to `main`. Deployment is separa
 
 ## Browser data and limitations
 
-Progress uses only `cs-review:progress:v1` in localStorage. Reset removes only that key. Completion means a multiple-choice answer was submitted or a solution was revealed; it is not a mastery score. Incorrect history and the manually controlled review queue are stored separately. Data does not sync between browsers/devices; there is no export/import, multi-tab merge, scheduling algorithm, automatic free-text grading, or secure exam mode. Answers in a static deployment are public assets.
+Progress uses only `interview-review:fsrs:v1` in localStorage: each card's FSRS state (keyed by `id@version`), the complete review log, new cards introduced per day, filter settings, and the current session. The log is never trimmed, so FSRS parameters can be tuned to your history later, or replayed into a newer FSRS model. The v1 key `cs-review:progress:v1` is removed on first load. Reset removes only the v2 key.
+
+Scheduling uses `ts-fsrs` 5.4.2 (FSRS-6) with 90% desired retention, a 180-day maximum interval and interval fuzz. Bumping a card's `version` gives it a fresh schedule. Data does not sync between browsers or devices; there is no export/import, multi-tab merge, automatic free-text grading, or secure exam mode. Answers in a static deployment are public assets.
