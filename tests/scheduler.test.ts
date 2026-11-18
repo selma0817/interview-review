@@ -84,16 +84,16 @@ describe('sessions',()=>{
   });
 
   it('lets a card with two topics match a filter on either one',()=>{
-    const crossTopic=flashcard('mvcc','Database',{topics:['Database','Concurrency']});
+    const crossTopic=flashcard('mvcc','transactions',{topics:['transactions','concurrency']});
     const bank=bankOf([crossTopic,flashcard('go-1')]);
-    expect(practiceQueue(bank,defaults(bank),{topics:['Concurrency'],types:['flashcard']},at(14))).toEqual(['mvcc@1']);
+    expect(practiceQueue(bank,defaults(bank),{topics:['concurrency'],types:['flashcard']},at(14))).toEqual(['mvcc@1']);
   });
 
   it('orders practice by lowest recall first, new cards last, within the filters',()=>{
-    const bank=bankOf([flashcard('old'),flashcard('recent'),flashcard('fresh'),flashcard('db','DB')]);
+    const bank=bankOf([flashcard('old'),flashcard('recent'),flashcard('fresh'),flashcard('db','storage-indexing')]);
     let store=rate(defaults(bank),'old@1',4,at(1));
     store=rate(store,'recent@1',4,at(13));
-    expect(practiceQueue(bank,store,{topics:['Go'],types:['flashcard']},at(14))).toEqual(['old@1','recent@1','fresh@1']);
+    expect(practiceQueue(bank,store,{topics:['go'],types:['flashcard']},at(14))).toEqual(['old@1','recent@1','fresh@1']);
   });
 });
 

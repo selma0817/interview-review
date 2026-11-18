@@ -1,12 +1,12 @@
 {
-  "topic": "Database",
+  "topic": "storage-indexing",
   "questions": [
     {
       "id": "db-001",
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Database"
+        "storage-indexing"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -51,7 +51,7 @@
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Database"
+        "storage-indexing"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -96,7 +96,7 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "Database"
+        "storage-indexing"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -123,7 +123,7 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "Database"
+        "storage-indexing"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",

@@ -10,6 +10,7 @@
     "bank:build": "node --import tsx scripts/bank.ts build",
     "bank:add": "node --import tsx scripts/bank.ts add",
     "bank:remove": "node --import tsx scripts/bank.ts remove",
+    "bank:retopic": "node --import tsx scripts/bank.ts retopic",
     "test": "vitest run",
     "test:e2e": "playwright test",
     "build": "npm run bank:build && npm run typecheck && vite build",

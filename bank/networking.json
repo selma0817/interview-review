@@ -1,12 +1,12 @@
 {
-  "topic": "Networking",
+  "topic": "networking",
   "questions": [
     {
       "id": "net-001",
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Networking"
+        "networking"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -51,7 +51,7 @@
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Networking"
+        "networking"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -96,7 +96,7 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "Networking"
+        "networking"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -123,7 +123,7 @@
       "version": 1,
       "type": "short_answer",
       "topics": [
-        "Networking"
+        "networking"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",

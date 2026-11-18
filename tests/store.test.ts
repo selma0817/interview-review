@@ -24,7 +24,7 @@ describe('saved progress',()=>{
 
   it('falls back to all topics when every saved topic name has been renamed away',()=>{
     const saved={...defaults(bank),settings:{topics:['Go concurrency'],types:['flashcard']}};
-    expect(restore(bank,storageWith(JSON.stringify(saved))).store.settings).toEqual({topics:['Go'],types:['flashcard']});
+    expect(restore(bank,storageWith(JSON.stringify(saved))).store.settings).toEqual({topics:['go'],types:['flashcard']});
     const cleared={...defaults(bank),settings:{topics:[],types:['flashcard']}};
     expect(restore(bank,storageWith(JSON.stringify(cleared))).store.settings.topics).toEqual([]);
   });

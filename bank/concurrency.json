@@ -1,12 +1,13 @@
 {
-  "topic": "Go",
+  "topic": "concurrency",
   "questions": [
     {
       "id": "go-001",
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -51,7 +52,8 @@
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -96,7 +98,8 @@
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -141,7 +144,8 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -168,7 +172,8 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -200,7 +205,8 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -233,7 +239,8 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -266,7 +273,8 @@
       "version": 1,
       "type": "short_answer",
       "topics": [
-        "Go"
+        "concurrency",
+        "go"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",

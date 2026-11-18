@@ -28,7 +28,7 @@ One loop for learning CS concepts and keeping them:
 | Area | Decision |
 |---|---|
 | Card source | Real sessions plus your yes/no. No bulk generation from every note |
-| Topics (2026-11-18) | Derived by `bank:add` from the cited notes' vault folders, never written by the LLM. A card can have several; it lives in its first topic's file |
+| Topics (2026-11-18) | Copied by `bank:add` from the cited notes' `topic/` tags, never written by the LLM. The allowed list lives in the vault's `Topics.md` (40 LeetCode-style tags: 36 concept + 4 language), copied to `bank/topics.json`. A card can have several; it lives in its first topic's file. `bank:retopic` re-syncs cards after notes are retagged |
 | Where cards live | `interview-review/bank/`, on GitHub |
 | Who sees progress | Only you, on the site. The interviewer never does |
 | Weak spots | In the notes, under `## Common mistakes`, with your own marked `(mine)` |
@@ -92,7 +92,7 @@ The skills live in the vault because your sessions run there. The vault repo is 
 }
 ```
 
-- **Topics:** `topics` is a list derived from the cited notes' folders (`Concepts/<area>/<folder>/…` → the folder, or the area for a note directly in it). `bank:validate` rejects topics that don't match. The file-level `topic` is the card's first topic.
+- **Topics:** `topics` is the union of the cited notes' `topic/` tags (first note first), copied by `bank:add`; `bank:validate` rejects topics not in `bank/topics.json`. The file-level `topic` is the card's first topic.
 - **Types:** `single_choice`, `flashcard`, `short_answer`, `code_reading` (as in v1). Optional fields: `rubric` (3–5 checkable points), `code_language`, `extension_note`.
 - **Dropped from v1:** `review_status` (every card in the bank is approved), `grading` (implied by the type), `language` (always English).
 - **New:** `created`, `provenance` (the session moment it came from), `checks`.

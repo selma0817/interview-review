@@ -1,58 +1,99 @@
 import {describe,expect,it} from 'vitest';
 import type {Question} from '../src/types';
-import {addCards,deriveTopics,newId,removeCards,slug,stampSources,validateBank,type BankDir,type Vault} from '../scripts/bankLib';
-import {flashcard,sourceIn} from './fixtures';
+import {addCards,deriveTopics,newId,noteTopics,parseTopicList,removeCards,retopicCards,slug,stampSources,validateBank,type BankDir,type Topic,type Vault} from '../scripts/bankLib';
+import {flashcard} from './fixtures';
 
+const topicsMd=`# Topics
+
+### Data and storage
+
+| Tag | Covers |
+|---|---|
+| \`topic/transactions\` | ACID, isolation levels, MVCC |
+
+### Computer systems
+
+| Tag | Covers |
+|---|---|
+| \`topic/concurrency\` | locks, CAS and atomics |
+
+### Distributed systems
+
+| Tag | Covers |
+|---|---|
+| \`topic/consensus\` | Raft, Paxos |
+
+## Considered, not added yet
+
+- \`topic/cpp\`: C/C++ systems programming
+`;
 const raftNote='Concepts/Distributed Systems/Raft/Raft Commit.md';
 const mvccNote='Concepts/Computer System/Database/MVCC and Locking.md';
 const casNote='Concepts/Computer System/Concurrency/Compare-and-Swap.md';
 const notes:Record<string,string>={
-  [raftNote]:'# Raft\n\n## Why direct commitment requires the current term\n\ntext\n\n### Mistake 1: thinking a majority is enough (mine)\n',
-  [mvccNote]:'# MVCC\n\n## Lost update\n',
-  [casNote]:'# CAS\n\n## Check-then-act\n'
+  'Topics.md':topicsMd,
+  [raftNote]:'---\ntags:\n  - topic/consensus\n  - raft\n---\n# Raft\n\n## Why direct commitment requires the current term\n',
+  [mvccNote]:'---\ndate: 2026-09-15\ntags: [topic/transactions, topic/concurrency, mvcc]\n---\n# MVCC\n\n## Lost update\n',
+  [casNote]:'---\ntags:\n  - topic/concurrency\n  - cas\n---\n# CAS\n\n## Check-then-act\n',
+  'Concepts/Untagged.md':'# Untagged\n\n## Something\n',
+  'Concepts/Typo.md':'---\ntags:\n  - topic/consensous\n---\n# Typo\n\n## Something\n'
 };
 const fakeVault=(override:Partial<Vault>={}):Vault=>({commit:()=>'c'.repeat(40),repoUrl:()=>'https://github.com/selma0817/cs-knowledge-base',pushed:()=>true,clean:()=>true,blobSha:path=>path in notes?'b'.repeat(40):undefined,text:path=>notes[path],...override});
-const bankWith=(...files:[string,Question[]][]):BankDir=>({files:new Map(files.map(([topic,questions])=>[`${slug(topic)}.json`,{topic,questions}])),retired:new Set()});
+const allowed=parseTopicList(topicsMd);
+// Allows every topic its cards use, so each test isolates one rule
+const bankWith=(...files:[string,Question[]][]):BankDir=>{
+  const used=[...new Set(files.flatMap(([topic,questions])=>[topic,...questions.flatMap(q=>q.topics)]))].filter(name=>!allowed.some(topic=>topic.name===name));
+  return {files:new Map(files.map(([topic,questions])=>[`${slug(topic)}.json`,{topic,questions}])),retired:new Set(),topics:[...allowed,...used.map((name):Topic=>({name,area:'Test',description:'test topic'}))]};
+};
 // Feeds newId fixed picks from the 36-character alphabet: 0 → 'a', 1 → 'b', 2 → 'c'
 const picks=(...letters:number[])=>{const sequence=letters.flatMap(letter=>Array(6).fill(letter));let index=0;return ()=>sequence[index++];};
 const draft={type:'flashcard',difficulty:'hard',question:'Q?',answer:'A.',explanation:'Why.',provenance:'You said a majority is enough.',checks:{grounded:'pass',blind_answer:'n/a',code_run:'n/a'},sources:[{path:raftNote,heading:'Why direct commitment requires the current term'}]};
 
-describe('topics from vault folders',()=>{
-  it('uses the folder under the area, or the area for a note directly in it',()=>{
-    expect(deriveTopics([{path:'Concepts/Computer System/Database/MVCC and Locking.md'}])).toEqual(['Database']);
-    expect(deriveTopics([{path:'Concepts/Programming Languages/Go/Concurrency/Worker Pool.md'}])).toEqual(['Go']);
-    expect(deriveTopics([{path:'Concepts/LLM/LLM Serving.md'}])).toEqual(['LLM']);
-    expect(deriveTopics([{path:'Projects/GRPO DAPO Reproduction/GRPO DAPO Project Overview.md'}])).toEqual(['GRPO DAPO Reproduction']);
+describe('the topic list and note tags',()=>{
+  it('reads tags, areas and descriptions from the table rows of Topics.md, skipping "considered" ones',()=>{
+    expect(allowed).toEqual([
+      {name:'transactions',area:'Data and storage',description:'ACID, isolation levels, MVCC'},
+      {name:'concurrency',area:'Computer systems',description:'locks, CAS and atomics'},
+      {name:'consensus',area:'Distributed systems',description:'Raft, Paxos'}
+    ]);
   });
 
-  it('gives a card citing two folders both topics, first source first, without repeats',()=>{
-    expect(deriveTopics([{path:mvccNote},{path:casNote},{path:'Concepts/Computer System/Database/B+ Tree.md'}])).toEqual(['Database','Concurrency']);
+  it('reads topic/ tags from block or inline frontmatter lists, ignoring free-form tags',()=>{
+    expect(noteTopics(notes[raftNote])).toEqual(['consensus']);
+    expect(noteTopics(notes[mvccNote])).toEqual(['transactions','concurrency']);
+    expect(noteTopics('# No frontmatter')).toEqual([]);
   });
 
-  it('refuses a note that sits in no topic folder',()=>expect(()=>deriveTopics([{path:'Concepts/Interview MOC.md'}])).toThrow(/isn't inside a topic folder/));
+  it('gives a card the union of its notes\' topics, first note first, without repeats',()=>{
+    expect(deriveTopics([{path:mvccNote},{path:casNote}],fakeVault(),allowed)).toEqual(['transactions','concurrency']);
+  });
+
+  it('refuses an untagged note or a topic missing from Topics.md',()=>{
+    expect(()=>deriveTopics([{path:'Concepts/Untagged.md'}],fakeVault(),allowed)).toThrow(/has no topic\/ tags yet\. Tag the note first/);
+    expect(()=>deriveTopics([{path:'Concepts/Typo.md'}],fakeVault(),allowed)).toThrow(/topic\/consensous, which isn't defined in Topics\.md/);
+  });
 });
 
 describe('bank files',()=>{
-  it('names topic files by slug',()=>expect(slug('GRPO DAPO Reproduction')).toBe('grpo-dapo-reproduction'));
-
   it('accepts a consistent bank and rejects mistakes that span files',()=>{
-    expect(validateBank(bankWith(['Go',[flashcard('go-1')]],['DB',[flashcard('db-1','DB')]])).questions).toHaveLength(2);
-    expect(()=>validateBank(bankWith(['Go',[flashcard('x')]],['DB',[flashcard('x','DB')]]))).toThrow(/appears in both/);
-    expect(()=>validateBank(bankWith(['Go',[flashcard('db-1','DB')]]))).toThrow(/belongs in db\.json/);
-    expect(()=>validateBank({...bankWith(['Go',[flashcard('go-1')]]),retired:new Set(['go-1'])})).toThrow(/retired/);
+    expect(validateBank(bankWith(['go',[flashcard('go-1')]],['db',[flashcard('db-1','db')]])).questions).toHaveLength(2);
+    expect(()=>validateBank(bankWith(['go',[flashcard('x')]],['db',[flashcard('x','db')]]))).toThrow(/appears in both/);
+    expect(()=>validateBank(bankWith(['go',[flashcard('db-1','db')]]))).toThrow(/belongs in db\.json/);
+    expect(()=>validateBank({...bankWith(['go',[flashcard('go-1')]]),retired:new Set(['go-1'])})).toThrow(/retired/);
   });
 
-  it('rejects topics that the cited notes\' folders do not give',()=>{
-    expect(()=>validateBank(bankWith(['Go',[flashcard('go-1','Go',{topics:['Go','Databases']})]]))).toThrow(/notes' folders give \["Go"\]/);
+  it('rejects topics missing from bank/topics.json, or listed twice',()=>{
+    expect(()=>validateBank({...bankWith(['go',[flashcard('go-1')]]),topics:allowed})).toThrow(/"go", which isn't in bank\/topics\.json\. If Topics\.md renamed or removed it, .*bank:retopic/);
+    expect(()=>validateBank(bankWith(['go',[flashcard('go-1','go',{topics:['go','go']})]]))).toThrow(/lists a topic twice/);
   });
 
   it('points a malformed card to its file and field',()=>{
-    expect(()=>validateBank(bankWith(['Go',[{...flashcard('go-1'),difficulty:'extreme'} as unknown as Question]]))).toThrow(/go\.json: card go-1: difficulty/);
+    expect(()=>validateBank(bankWith(['go',[{...flashcard('go-1'),difficulty:'extreme'} as unknown as Question]]))).toThrow(/go\.json: card go-1: difficulty/);
   });
 });
 
 describe('IDs',()=>{
-  it('never hands out a taken ID',()=>expect(newId('Raft',new Set(['raft-aaaaaa']),picks(0,1))).toBe('raft-bbbbbb'));
+  it('never hands out a taken ID',()=>expect(newId('consensus',new Set(['consensus-aaaaaa']),picks(0,1))).toBe('consensus-bbbbbb'));
 });
 
 describe('stamping sources',()=>{
@@ -68,31 +109,44 @@ describe('stamping sources',()=>{
   });
 });
 
-describe('adding and removing cards',()=>{
-  it('derives topics, assigns a fresh ID and adds the card to its first topic\'s file',()=>{
-    const {bank,added}=addCards(bankWith(['Go',[flashcard('go-1')]]),[draft],fakeVault(),'2026-11-18',picks(0));
-    expect(added).toEqual([{id:'raft-aaaaaa',file:'raft.json'}]);
-    expect(bank.files.get('raft.json')!.questions[0]).toMatchObject({id:'raft-aaaaaa',version:1,topics:['Raft'],created:'2026-11-18',sources:[{blob_sha:'b'.repeat(40)}]});
+describe('adding, retopicking and removing cards',()=>{
+  it('copies topics from the note\'s tags, assigns a fresh ID, files the card, and refreshes the topic list',()=>{
+    const {bank,added}=addCards(bankWith(['concurrency',[flashcard('c-1','concurrency')]]),[draft],fakeVault(),'2026-11-18',picks(0));
+    expect(added).toEqual([{id:'consensus-aaaaaa',file:'consensus.json'}]);
+    expect(bank.files.get('consensus.json')!.questions[0]).toMatchObject({id:'consensus-aaaaaa',version:1,topics:['consensus'],created:'2026-11-18',sources:[{blob_sha:'b'.repeat(40)}]});
+    expect(bank.topics).toEqual(allowed);
   });
 
-  it('files a two-folder card under its first topic and lists both',()=>{
+  it('refuses to add while existing cards use a topic Topics.md no longer has',()=>{
+    expect(()=>addCards(bankWith(['go',[flashcard('go-1')]]),[draft],fakeVault(),'2026-11-18')).toThrow(/run npm run bank:retopic/);
+  });
+
+  it('files a card citing two tagged notes under its first topic and lists both',()=>{
     const crossTopic={...draft,sources:[{path:mvccNote,heading:'Lost update'},{path:casNote,heading:'Check-then-act'}]};
-    const {bank,added}=addCards(bankWith(),[crossTopic],fakeVault(),'2026-11-18',picks(0));
-    expect(added).toEqual([{id:'database-aaaaaa',file:'database.json'}]);
-    expect(bank.files.get('database.json')!.questions[0].topics).toEqual(['Database','Concurrency']);
+    const {bank}=addCards(bankWith(),[crossTopic],fakeVault(),'2026-11-18',picks(0));
+    expect(bank.files.get('transactions.json')!.questions[0].topics).toEqual(['transactions','concurrency']);
   });
 
   it('rejects drafts that pick their own ID or topic, carry unknown fields, or key a missing option',()=>{
     expect(()=>addCards(bankWith(),[{...draft,id:'raft-mine'}],fakeVault(),'2026-11-18')).toThrow(/has "id"/);
-    expect(()=>addCards(bankWith(),[{...draft,topic:'Consensus'}],fakeVault(),'2026-11-18')).toThrow(/has "topic"/);
+    expect(()=>addCards(bankWith(),[{...draft,topics:['consensus']}],fakeVault(),'2026-11-18')).toThrow(/has "topics"/);
     expect(()=>addCards(bankWith(),[{...draft,grading:'self_assessment'}],fakeVault(),'2026-11-18')).toThrow();
     expect(()=>addCards(bankWith(),[{...draft,type:'single_choice',answer:'C',options:[{id:'A',text:'a'},{id:'B',text:'b'}],checks:{grounded:'pass',blind_answer:'pass',code_run:'n/a'}}],fakeVault(),'2026-11-18')).toThrow(/missing/);
   });
 
-  it('retires removed IDs so a new card never inherits their FSRS history',()=>{
-    const {bank}=removeCards(bankWith(['Raft',[{...flashcard('raft-aaaaaa','Raft'),sources:[sourceIn('Raft')]}]]),['raft-aaaaaa']);
-    expect(bank.retired.has('raft-aaaaaa')).toBe(true);
-    expect(addCards(bank,[draft],fakeVault(),'2026-11-18',picks(0,2)).added[0].id).toBe('raft-cccccc');
+  it('re-copies topics from current note tags and moves cards to their new first topic\'s file',()=>{
+    const stale=flashcard('mvcc-1','storage-indexing',{sources:[{path:mvccNote,heading:'Lost update',blob_sha:'b'.repeat(40),url:'https://github.com/o/v/blob/c/x.md'}]});
+    const {bank,changes}=retopicCards(bankWith(['storage-indexing',[stale]]),fakeVault());
+    expect(changes).toEqual([{id:'mvcc-1',from:['storage-indexing'],to:['transactions','concurrency']}]);
+    expect([...bank.files.keys()]).toEqual(['transactions.json']);
+  });
+
+  it('retires removed IDs, drops emptied files, and never reuses the ID',()=>{
+    const {bank,changed}=removeCards(bankWith(['consensus',[flashcard('consensus-aaaaaa','consensus')]]),['consensus-aaaaaa']);
+    expect(bank.retired.has('consensus-aaaaaa')).toBe(true);
+    expect(bank.files.has('consensus.json')).toBe(false);
+    expect(changed).toEqual([]);
+    expect(addCards(bank,[draft],fakeVault(),'2026-11-18',picks(0,2)).added[0].id).toBe('consensus-cccccc');
     expect(()=>removeCards(bank,['nope'])).toThrow(/No card/);
   });
 });

@@ -6,7 +6,7 @@ import {defaults} from '../src/lib/store';
 import {rate} from '../src/lib/scheduler';
 import {bankOf,flashcard,multipleChoice} from './fixtures';
 
-const bank=bankOf([multipleChoice('go-1'),flashcard('go-2'),flashcard('db-1','DB')]);
+const bank=bankOf([multipleChoice('go-1'),flashcard('go-2'),flashcard('db-1','storage-indexing')]);
 afterEach(cleanup);
 
 describe('HomeScreen',()=>{
@@ -18,7 +18,7 @@ describe('HomeScreen',()=>{
     const today=screen.getByRole('region',{name:'Today'});
     expect(within(today).getByText('Due').previousSibling).toHaveTextContent('1');
     expect(within(today).getByText('New').previousSibling).toHaveTextContent('2');
-    expect(within(screen.getByRole('heading',{level:3,name:'Go'}).closest('article')!).getByText('1 due')).toBeInTheDocument();
+    expect(within(screen.getByRole('heading',{level:3,name:'go'}).closest('article')!).getByText('1 due')).toBeInTheDocument();
     await user.click(screen.getByRole('button',{name:"Start today's review (3)"}));
     expect(actions.onStart).toHaveBeenCalledWith('today');
     expect(screen.getByRole('button',{name:'Practice 3 cards'})).toBeEnabled();
@@ -26,15 +26,15 @@ describe('HomeScreen',()=>{
   });
 
   it('counts a two-topic card in both topic tiles but once in Due',()=>{
-    const crossTopic=bankOf([flashcard('mvcc','Database',{topics:['Database','Concurrency']}),flashcard('go-1')]);
+    const crossTopic=bankOf([flashcard('mvcc','transactions',{topics:['transactions','concurrency']}),flashcard('go-1')]);
     const store=rate(defaults(crossTopic),'mvcc@1',1,new Date(2026,10,14,9,0));
     render(<HomeScreen bank={crossTopic} store={store} now={new Date(2026,10,14,9,5)} onSettings={vi.fn()} onStart={vi.fn()} onResume={vi.fn()} onReset={vi.fn()}/>);
-    for(const topic of ['Database','Concurrency'])expect(within(screen.getByRole('heading',{level:3,name:topic}).closest('article')!).getByText('1 due')).toBeInTheDocument();
+    for(const topic of ['transactions','concurrency'])expect(within(screen.getByRole('heading',{level:3,name:topic}).closest('article')!).getByText('1 due')).toBeInTheDocument();
     expect(within(screen.getByRole('region',{name:'Today'})).getByText('Due').previousSibling).toHaveTextContent('1');
   });
 
   it('disables practice when the filters match nothing',()=>{
-    const store={...defaults(bank),settings:{topics:['Go'],types:[]}};
+    const store={...defaults(bank),settings:{topics:['go'],types:[]}};
     render(<HomeScreen bank={bank} store={store} now={new Date(2026,10,14,9,0)} onSettings={vi.fn()} onStart={vi.fn()} onResume={vi.fn()} onReset={vi.fn()}/>);
     expect(screen.getByRole('button',{name:'Practice 0 cards'})).toBeDisabled();
     expect(screen.getByText('No cards match these filters.')).toBeInTheDocument();

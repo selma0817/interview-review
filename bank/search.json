@@ -1,12 +1,13 @@
 {
-  "topic": "Retrieval",
+  "topic": "search",
   "questions": [
     {
       "id": "rag-001",
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Retrieval"
+        "search",
+        "rag"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -51,7 +52,8 @@
       "version": 1,
       "type": "single_choice",
       "topics": [
-        "Retrieval"
+        "search",
+        "rag"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -96,7 +98,8 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "Retrieval"
+        "search",
+        "rag"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -123,7 +126,8 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "Retrieval"
+        "search",
+        "rag"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -150,7 +154,8 @@
       "version": 1,
       "type": "short_answer",
       "topics": [
-        "Retrieval"
+        "search",
+        "rag"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",

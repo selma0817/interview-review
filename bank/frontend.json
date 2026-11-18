@@ -1,12 +1,13 @@
 {
-  "topic": "TypeScript",
+  "topic": "frontend",
   "questions": [
     {
       "id": "react-001",
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "TypeScript"
+        "frontend",
+        "typescript"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -33,7 +34,8 @@
       "version": 1,
       "type": "flashcard",
       "topics": [
-        "TypeScript"
+        "frontend",
+        "typescript"
       ],
       "difficulty": "easy",
       "created": "2026-11-05",
@@ -60,7 +62,8 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "TypeScript"
+        "frontend",
+        "typescript"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",
@@ -92,7 +95,8 @@
       "version": 1,
       "type": "code_reading",
       "topics": [
-        "TypeScript"
+        "frontend",
+        "typescript"
       ],
       "difficulty": "medium",
       "created": "2026-11-05",

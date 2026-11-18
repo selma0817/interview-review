@@ -47,7 +47,7 @@ test('production prefix supports today\'s review, saved ratings, and topic pract
   await page.getByRole('button',{name:'← Back to home'}).click();
   const practice=page.getByRole('region',{name:'Practice a topic'});
   await practice.getByRole('button',{name:'Clear'}).first().click();
-  await practice.getByLabel('Raft').check();
+  await practice.getByLabel('consensus').check();
   await practice.getByRole('button',{name:'Practice 5 cards'}).click();
   await expect(page.getByText(/Practice · Card 1 of 5/)).toBeVisible();
   await answerCard(page);

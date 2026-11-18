@@ -53,13 +53,14 @@ Cards live in **`bank/<topic>.json`**, one file per topic, as `{"topic": "...", 
 
 | Command | What it does |
 |---|---|
-| `npm run bank:validate` | Checks every topic file: schema, unique IDs across files, no retired IDs, topics matching the cited notes' folders, multiple-choice answers among their options, stamped sources. CI runs it |
+| `npm run bank:validate` | Checks every topic file: schema, unique IDs across files, no retired IDs, topics all listed in `bank/topics.json`, multiple-choice answers among their options, stamped sources. CI runs it |
 | `npm run bank:build` | Validates, then writes `public/questions.json` |
-| `npm run bank:add -- drafts.json [--vault ../knowledge_base] [--dry-run]` | Adds draft cards (written by the distill skill, without `id` or source hashes). Assigns each a fresh ID and derives its topics; checks that each cited heading exists in a committed, pushed vault note; stamps `blob_sha` and a URL pinned to that commit; appends to the topic file. Doesn't commit |
+| `npm run bank:add -- drafts.json [--vault ../knowledge_base] [--dry-run]` | Adds draft cards (written by the distill skill, without `id` or source hashes). Assigns each a fresh ID and copies its topics from the cited notes' `topic/` tags; checks that each cited heading exists in a committed, pushed vault note; stamps `blob_sha` and a URL pinned to that commit; appends to the topic file. Doesn't commit |
+| `npm run bank:retopic -- [--vault ../knowledge_base] [--dry-run]` | Re-copies every card's topics from the cited notes' current `topic/` tags and refreshes `bank/topics.json`. Run it after retagging notes or renaming a topic in `Topics.md`. Card content and IDs stay, so review progress is untouched |
 | `npm run bank:remove -- <id> [<id>…]` | Removes cards and records their IDs in `bank/retired-ids.txt` |
 
 - **IDs are never reused.** Progress is keyed by `id@version`, so a reused ID would hand a new card a deleted card's review history. That's why `bank:add` picks IDs (`<topic>-<6 random characters>`) and skips anything in `retired-ids.txt`.
-- **Topics come from the vault, not the LLM.** A card's `topics` are the folders of the notes it cites: the folder under the area (`Concepts/Computer System/Database/…` → **Database**), or the area itself for a note directly in it (`Concepts/LLM/…` → **LLM**). A card citing notes from two folders gets both topics and shows under both on the site. A new vault folder means a new topic, with no list to maintain.
+- **Topics come from the vault, not the LLM.** The vault's `Topics.md` defines the allowed `topic/` tags (concept families like `consensus` or `rl-fine-tuning`, plus `go`, `python`, `java`, `typescript`). Each note carries 1–3 of them in its frontmatter. A card's `topics` are the `topic/` tags of the notes it cites, so a card citing notes on transactions and concurrency shows under both. `bank:add` refuses a cited note without `topic/` tags, or with a tag `Topics.md` doesn't define. `bank/topics.json` is the bank's copy of that list (with areas and descriptions), so CI can check card topics without the vault.
 - **Bump `version`** only when a card's meaning changes. That gives it a fresh review schedule.
 - **Card fields:** `created`, `provenance` (the session moment it came from) and `checks` (`grounded`, `blind_answer`, `code_run`: `pass`, `n/a`, or `not_run` for cards migrated from v1). Unknown fields are rejected.
 

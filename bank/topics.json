@@ -1,0 +1,205 @@
+{
+  "source": "Topics.md in the vault, copied by bank:add and bank:retopic",
+  "topics": [
+    {
+      "name": "data-structures",
+      "area": "Algorithms and data structures",
+      "description": "arrays, hash maps, trees (BST, red-black, B+), heaps, tries, graph representations"
+    },
+    {
+      "name": "algorithms",
+      "area": "Algorithms and data structures",
+      "description": "complexity, sorting and searching, graph traversal, dynamic programming, greedy"
+    },
+    {
+      "name": "operating-systems",
+      "area": "Computer systems",
+      "description": "processes and threads, memory, file systems, page cache, syscalls, IPC"
+    },
+    {
+      "name": "concurrency",
+      "area": "Computer systems",
+      "description": "locks, CAS and atomics, memory models, channels, races and deadlocks"
+    },
+    {
+      "name": "networking",
+      "area": "Computer systems",
+      "description": "TCP/UDP, IP/DNS/NAT, TLS/HTTPS, HTTP versions, sockets, network debugging"
+    },
+    {
+      "name": "gpu-computing",
+      "area": "Computer systems",
+      "description": "GPU architecture, memory hierarchy, CUDA basics, FLOPs and the roofline model"
+    },
+    {
+      "name": "language-runtimes",
+      "area": "Programming languages",
+      "description": "ideas that cut across languages: compilers vs interpreters, VMs, garbage collection, type systems, memory models"
+    },
+    {
+      "name": "go",
+      "area": "Programming languages",
+      "description": "Go itself: goroutines and the scheduler, channels, maps and slices, the standard library"
+    },
+    {
+      "name": "python",
+      "area": "Programming languages",
+      "description": "Python itself: the interpreter and GIL, asyncio, typing, packaging"
+    },
+    {
+      "name": "java",
+      "area": "Programming languages",
+      "description": "Java itself: the JVM, the Java memory model, java.util.concurrent"
+    },
+    {
+      "name": "typescript",
+      "area": "Programming languages",
+      "description": "TypeScript and JavaScript: types vs runtime data, the event loop, React-facing language features"
+    },
+    {
+      "name": "storage-indexing",
+      "area": "Data and storage",
+      "description": "storage engines, B+ trees vs LSM trees, indexes, query execution"
+    },
+    {
+      "name": "transactions",
+      "area": "Data and storage",
+      "description": "ACID, isolation levels, MVCC, locking, distributed transactions"
+    },
+    {
+      "name": "caching",
+      "area": "Data and storage",
+      "description": "cache patterns, eviction, invalidation, Redis, CDNs"
+    },
+    {
+      "name": "search",
+      "area": "Data and storage",
+      "description": "inverted indexes, BM25, vector and ANN search, hybrid retrieval, reranking"
+    },
+    {
+      "name": "consensus",
+      "area": "Distributed systems",
+      "description": "Raft, Paxos, leader election, replicated logs"
+    },
+    {
+      "name": "replication-consistency",
+      "area": "Distributed systems",
+      "description": "replication, consistency models, quorums, CAP, clocks and ordering"
+    },
+    {
+      "name": "partitioning-scaling",
+      "area": "Distributed systems",
+      "description": "sharding, consistent hashing, load balancing, horizontal scaling"
+    },
+    {
+      "name": "distributed-storage",
+      "area": "Distributed systems",
+      "description": "distributed file and object stores (GFS, HDFS, S3), chunking, leases"
+    },
+    {
+      "name": "messaging-streaming",
+      "area": "Distributed systems",
+      "description": "queues, Kafka, delivery guarantees, event sourcing, stream processing"
+    },
+    {
+      "name": "resilience",
+      "area": "Distributed systems",
+      "description": "timeouts, retries with backoff and jitter, idempotency, rate limiting, circuit breakers"
+    },
+    {
+      "name": "api-design",
+      "area": "Backend and system design",
+      "description": "REST, gRPC, RPC and serialization, API gateways, versioning, pagination"
+    },
+    {
+      "name": "security",
+      "area": "Backend and system design",
+      "description": "authentication and authorization (OAuth, JWT), TLS and certificates, OWASP Top 10, secrets"
+    },
+    {
+      "name": "system-design",
+      "area": "Backend and system design",
+      "description": "the design-interview method: requirements, estimation, trade-offs, end-to-end designs"
+    },
+    {
+      "name": "observability",
+      "area": "Backend and system design",
+      "description": "logs, metrics, traces, SLOs, debugging in production"
+    },
+    {
+      "name": "testing",
+      "area": "Engineering practice and infrastructure",
+      "description": "the test pyramid, unit, integration and end-to-end tests, mocking, flaky tests"
+    },
+    {
+      "name": "ci-cd",
+      "area": "Engineering practice and infrastructure",
+      "description": "pipelines, gates vs reports, build once, deployment and release strategies"
+    },
+    {
+      "name": "containers-cloud",
+      "area": "Engineering practice and infrastructure",
+      "description": "Docker, Kubernetes, cloud services and networking, infrastructure as code"
+    },
+    {
+      "name": "software-design",
+      "area": "Engineering practice and infrastructure",
+      "description": "design patterns, SOLID, architecture styles, code quality"
+    },
+    {
+      "name": "frontend",
+      "area": "Engineering practice and infrastructure",
+      "description": "browser rendering, React rendering and state, frontend performance"
+    },
+    {
+      "name": "ml-fundamentals",
+      "area": "ML and deep learning",
+      "description": "supervised learning, loss and gradient descent, overfitting and regularization, evaluation metrics, bias–variance"
+    },
+    {
+      "name": "deep-learning",
+      "area": "ML and deep learning",
+      "description": "backpropagation, optimizers, normalization, initialization, training stability"
+    },
+    {
+      "name": "transformers",
+      "area": "ML and deep learning",
+      "description": "attention, the KV cache, tokenization and embeddings, positional encoding, mixture of experts"
+    },
+    {
+      "name": "llm-training",
+      "area": "LLMs",
+      "description": "pretraining, SFT, distributed training (data, tensor and pipeline parallelism, ZeRO/FSDP), mixed precision, LoRA"
+    },
+    {
+      "name": "rl-fine-tuning",
+      "area": "LLMs",
+      "description": "RLHF and PPO, GRPO, DAPO, DPO, reward design, KL regularization, advantage estimation, reward hacking"
+    },
+    {
+      "name": "llm-inference",
+      "area": "LLMs",
+      "description": "serving systems, continuous batching and PagedAttention, decoding and sampling, quantization, prompt caching, speculative decoding"
+    },
+    {
+      "name": "llm-apis-prompting",
+      "area": "LLM applications and agents",
+      "description": "prompting, function calling, structured outputs, streaming, context management, cost and latency"
+    },
+    {
+      "name": "rag",
+      "area": "LLM applications and agents",
+      "description": "chunking, embeddings, retrieval pipelines, grounding, RAG evaluation"
+    },
+    {
+      "name": "agents",
+      "area": "LLM applications and agents",
+      "description": "the agent loop, ReAct, planning, tool use and MCP, agent memory, multi-agent systems, human-in-the-loop"
+    },
+    {
+      "name": "evaluation-safety",
+      "area": "LLM applications and agents",
+      "description": "evals and LLM-as-judge, agent evaluation, tracing, prompt injection, sandboxing, guardrails"
+    }
+  ]
+}
