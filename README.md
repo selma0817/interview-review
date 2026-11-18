@@ -67,14 +67,19 @@ For a custom domain or root deployment use `VITE_BASE_PATH=/`. Assets and the ba
 
 Live site: https://selma0817.github.io/interview-review/ (repository `selma0817/interview-review`).
 
-Nothing is published automatically by this repository. After local review:
+Every merge to `main` deploys automatically, but only after the full checks pass:
 
-1. Create the intended GitHub repository and push this project to its `main` branch.
-2. In **Settings → Pages**, choose **GitHub Actions** as the source.
-3. Open **Actions → Deploy → Run workflow**, select `main`, and run it.
-4. Wait for verification and deployment, then open the URL shown by the `github-pages` environment/workflow output.
+```
+PR → CI (ci.yaml: typecheck, bank, unit tests, build, e2e) → merge
+   → Deploy (deploy.yaml): ci / checks → pack the tested dist/ → deploy-pages → live
+```
 
-The CI workflow runs on pull requests and pushes to `main`. Deployment is separately manual, restricted to `main`, and uses GitHub's Pages/OIDC permissions—no PAT or API key. To opt into push-to-main deployment later, add `push: branches: [main]` under the deploy workflow's `on` block after review.
+- **Pull requests** run `.github/workflows/ci.yaml` only. Its last step, which packs `dist/` as the Pages artifact, is skipped on PRs.
+- **Deploy** (`.github/workflows/deploy.yaml`) runs on every push to `main` (in practice, every merge). It calls `ci.yaml` as a reusable workflow, then publishes the exact `dist/` that passed e2e. The deploy job never rebuilds.
+- **`main` is protected by a ruleset:** changes must arrive through a pull request, the `checks` status check (from GitHub Actions) must pass, and the branch must be up to date. Direct pushes, force pushes and deleting `main` are rejected, with no bypass, even for admins.
+- **Manual re-deploy:** **Actions → Deploy → Run workflow** on `main`, or `gh workflow run deploy.yaml --ref main`. Running it from any other branch runs CI but never deploys, because of the deploy job's `if: github.ref == 'refs/heads/main'` guard and the `github-pages` environment's `main`-only branch policy.
+
+Pages is set to deploy from **GitHub Actions** and uses Pages/OIDC permissions, so no PAT or API key is stored.
 
 ## Browser data and limitations
 
