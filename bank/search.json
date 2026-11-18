@@ -1,0 +1,188 @@
+{
+  "topic": "search",
+  "questions": [
+    {
+      "id": "rag-001",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "search",
+        "rag"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Why does Reciprocal Rank Fusion combine ranks rather than directly adding BM25 scores and embedding similarities?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Ranks encode the complete semantic meaning of documents."
+        },
+        {
+          "id": "B",
+          "text": "All retrievers already produce identical score distributions."
+        },
+        {
+          "id": "C",
+          "text": "Raw scores can have incompatible scales, while ranks provide a common combination scheme."
+        },
+        {
+          "id": "D",
+          "text": "RRF guarantees that the top result is correct."
+        }
+      ],
+      "answer": "C",
+      "explanation": "RRF combines reciprocal rank contributions without requiring raw-score calibration. It provides no correctness guarantee.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Fusion: Reciprocal Rank Fusion (RRF)",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "rag-002",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "search",
+        "rag"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A first-stage retriever omits the only relevant passage from its top-100. Can a reranker restricted to those 100 passages recover it?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No; the missing passage must first enter the candidate set."
+        },
+        {
+          "id": "B",
+          "text": "Yes; reranking automatically searches the whole corpus."
+        },
+        {
+          "id": "C",
+          "text": "Yes, if its score exceeds 1."
+        },
+        {
+          "id": "D",
+          "text": "Only by using a larger generation context window."
+        }
+      ],
+      "answer": "A",
+      "explanation": "A reranker reorders its supplied candidates. Missing candidates are a first-stage recall problem.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Reranking.md",
+          "heading": "The two-stage pattern",
+          "blob_sha": "3acd7d1b509c6ec6c21ef20282ee2dd7dc561ee3",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Reranking.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "rag-003",
+      "version": 1,
+      "type": "flashcard",
+      "topics": [
+        "search",
+        "rag"
+      ],
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "Why combine sparse and dense retrieval?",
+      "answer": "Sparse retrieval is useful for exact terms and identifiers; dense retrieval can match semantically related paraphrases.",
+      "explanation": "Their strengths are complementary. Improvement must be measured rather than assumed for every query.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Dense vs sparse",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "rag-004",
+      "version": 1,
+      "type": "flashcard",
+      "topics": [
+        "search",
+        "rag"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "How does a typical cross-encoder reranker differ from a bi-encoder retriever?",
+      "answer": "A bi-encoder encodes query and document separately; a cross-encoder processes the pair jointly.",
+      "explanation": "Precomputed document embeddings make first-stage search efficient. Joint scoring spends more query-time computation on a smaller candidate set.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Reranking.md",
+          "heading": "Bi-encoder vs cross-encoder",
+          "blob_sha": "3acd7d1b509c6ec6c21ef20282ee2dd7dc561ee3",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Reranking.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "rag-005",
+      "version": 1,
+      "type": "short_answer",
+      "topics": [
+        "search",
+        "rag"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A CS-note search misses both exact error codes and paraphrased concepts. Propose a retrieval pipeline and explain how you would evaluate it.",
+      "answer": "Retrieve with BM25 and embeddings, fuse their ranked candidates, rerank a bounded candidate set, then send selected passages to the generator. Evaluate candidate recall and final ranking on labeled queries, including both query types.",
+      "explanation": "Fusion addresses complementary matching behavior; reranking focuses the context. Compare against each retriever alone, track latency, and do not assume the extra stages always improve quality.",
+      "rubric": [
+        "Uses complementary sparse and dense retrieval.",
+        "Combines results before reranking.",
+        "Measures recall and ranking with labeled queries.",
+        "Considers latency and baselines."
+      ],
+      "extension_note": "Evaluation rubric extends the source's architecture discussion; it is not quoted from the note.",
+      "sources": [
+        {
+          "path": "Concepts/LLM/Retrieval/Hybrid Retrieval.md",
+          "heading": "Where it fits",
+          "blob_sha": "726d6329eff86c47f545d6bc90bcd6768be69c24",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/LLM/Retrieval/Hybrid%20Retrieval.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    }
+  ]
+}

@@ -28,6 +28,7 @@ One loop for learning CS concepts and keeping them:
 | Area | Decision |
 |---|---|
 | Card source | Real sessions plus your yes/no. No bulk generation from every note |
+| Topics (2026-11-18) | Copied by `bank:add` from the cited notes' `topic/` tags, never written by the LLM. The allowed list lives in the vault's `Topics.md` (40 LeetCode-style tags: 36 concept + 4 language), copied to `bank/topics.json`. A card can have several; it lives in its first topic's file. `bank:retopic` re-syncs cards after notes are retagged |
 | Where cards live | `interview-review/bank/`, on GitHub |
 | Who sees progress | Only you, on the site. The interviewer never does |
 | Weak spots | In the notes, under `## Common mistakes`, with your own marked `(mine)` |
@@ -71,7 +72,7 @@ The skills live in the vault because your sessions run there. The vault repo is 
       "id": "raft-k3x9qa",
       "version": 1,
       "type": "single_choice",
-      "topic": "Raft",
+      "topics": ["Raft"],
       "difficulty": "hard",
       "question": "A term-7 leader sees an uncommitted term-6 entry on a majority…",
       "options": [{"id": "A", "text": "…"}, {"id": "B", "text": "…"}],
@@ -91,6 +92,7 @@ The skills live in the vault because your sessions run there. The vault repo is 
 }
 ```
 
+- **Topics:** `topics` is the union of the cited notes' `topic/` tags (first note first), copied by `bank:add`; `bank:validate` rejects topics not in `bank/topics.json`. The file-level `topic` is the card's first topic.
 - **Types:** `single_choice`, `flashcard`, `short_answer`, `code_reading` (as in v1). Optional fields: `rubric` (3–5 checkable points), `code_language`, `extension_note`.
 - **Dropped from v1:** `review_status` (every card in the bank is approved), `grading` (implied by the type), `language` (always English).
 - **New:** `created`, `provenance` (the session moment it came from), `checks`.
@@ -283,6 +285,8 @@ Each is checked against its note before writing. Eight of these notes have no Co
 ## 9. The 30 v1 questions
 
 Default: move them into `bank/*.json` with their current IDs, run checks 1–3 once, then one yes/no review. Dropped ones go to `retired-ids.txt`.
+
+**Step 2a (2026-11-18):** moved into `bank/*.json` unchanged, with `checks` set to `not_run` (a third value, used only for these migrated cards). The checks and the yes/no review happen in step 2d.
 
 ## 10. Open items (defaults in bold; confirm or change)
 

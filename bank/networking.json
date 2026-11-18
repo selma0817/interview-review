@@ -1,0 +1,156 @@
+{
+  "topic": "networking",
+  "questions": [
+    {
+      "id": "net-001",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "networking"
+      ],
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "A sender writes 'ABC' and then 'DEF' over a TCP connection. Which receive pattern is valid, assuming all six bytes arrive successfully?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Only two reads: 'ABC', then 'DEF'."
+        },
+        {
+          "id": "B",
+          "text": "Only one read: 'ABCDEF'."
+        },
+        {
+          "id": "C",
+          "text": "Any order, including 'DEFABC'."
+        },
+        {
+          "id": "D",
+          "text": "For example 'AB', then 'CDEF'; byte order is preserved, write boundaries are not."
+        }
+      ],
+      "answer": "D",
+      "explanation": "TCP exposes a byte stream. Applications must reconstruct messages independently of individual reads.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "A stream is continuous bytes",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "net-002",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "networking"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A protocol separates messages with newline characters. Message bodies may also contain newlines. What must the protocol do?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Rely on TCP packet boundaries."
+        },
+        {
+          "id": "B",
+          "text": "Define escaping or use another unambiguous framing rule."
+        },
+        {
+          "id": "C",
+          "text": "Insert a sleep between writes."
+        },
+        {
+          "id": "D",
+          "text": "Use a larger receive buffer."
+        }
+      ],
+      "answer": "B",
+      "explanation": "Buffer size and timing do not remove ambiguity. The framing rule must distinguish data from delimiters.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Message framing",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "net-003",
+      "version": 1,
+      "type": "flashcard",
+      "topics": [
+        "networking"
+      ],
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "Does UDP preserving datagram boundaries imply reliable, ordered delivery?",
+      "answer": "No. Datagram boundaries and delivery guarantees are separate properties.",
+      "explanation": "UDP does not itself guarantee delivery, ordering, or uniqueness.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Stream sockets versus datagram sockets",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "net-004",
+      "version": 1,
+      "type": "short_answer",
+      "topics": [
+        "networking"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Design a receiver for a persistent TCP protocol with a 4-byte unsigned big-endian length followed by that many body bytes. How should it handle fragmented reads and multiple messages arriving together?",
+      "answer": "Accumulate bytes; wait for four header bytes; decode and validate length against a configured maximum; wait for the complete body; emit that message and continue parsing remaining bytes. Retain incomplete input for later reads.",
+      "explanation": "Neither header nor body must arrive in one read. EOF with an incomplete frame is truncation, and untrusted lengths must be bounded before large allocations.",
+      "rubric": [
+        "Buffers incomplete headers and bodies.",
+        "Handles multiple frames per read.",
+        "Validates length before allocation.",
+        "Treats premature EOF as incomplete framing."
+      ],
+      "extension_note": "The 4-byte encoding is a concrete exercise built from the note's length-prefix concept.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Networking/Byte Streams and Message Framing.md",
+          "heading": "Message framing",
+          "blob_sha": "929090c66a38e16f12a31359c078ec23efd3786f",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Networking/Byte%20Streams%20and%20Message%20Framing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    }
+  ]
+}

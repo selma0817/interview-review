@@ -1,0 +1,1 @@
+# Card IDs removed from the bank, one per line. bank:add never reuses them.

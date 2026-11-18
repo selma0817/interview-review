@@ -1,0 +1,204 @@
+{
+  "topic": "consensus",
+  "questions": [
+    {
+      "id": "raft-001",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "consensus"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A voter ends at (lastLogTerm=4, lastLogIndex=100). A candidate ends at (5, 80). Considering only log freshness, is the candidate eligible?",
+      "options": [
+        {
+          "id": "A",
+          "text": "No, because 80 is less than 100."
+        },
+        {
+          "id": "B",
+          "text": "Only if its current election term is exactly 5."
+        },
+        {
+          "id": "C",
+          "text": "Yes: the higher last-log term wins the comparison."
+        },
+        {
+          "id": "D",
+          "text": "No, because both fields must be greater."
+        }
+      ],
+      "answer": "C",
+      "explanation": "Raft compares last-log term first and index only on a tie. Passing freshness alone does not guarantee a vote.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Log Freshness and Leader Eligibility.md",
+          "heading": "The log freshness comparison",
+          "blob_sha": "61fc4242e61fc65344eca6481152344ab10d70c7",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Log%20Freshness%20and%20Leader%20Eligibility.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "raft-002",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "consensus",
+        "concurrency"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-05",
+      "question": "A term-7 leader observes an uncommitted term-6 entry on a majority. It has not yet committed a term-7 entry after it. Can it newly commit that old entry solely by counting these replicas?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Yes; a majority is sufficient regardless of entry term."
+        },
+        {
+          "id": "B",
+          "text": "No; commit a current-term entry on a majority to commit the preceding prefix indirectly."
+        },
+        {
+          "id": "C",
+          "text": "Only if the oldest follower has applied it."
+        },
+        {
+          "id": "D",
+          "text": "Yes, if its local log is the longest."
+        }
+      ],
+      "answer": "B",
+      "explanation": "The leader's direct replica-counting rule requires a current-term entry. Older entries can become committed as part of its prefix.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why direct commitment requires the current term",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "raft-003",
+      "version": 1,
+      "type": "single_choice",
+      "topics": [
+        "consensus",
+        "concurrency"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A Raft peer has lastApplied=3 and commitIndex=6. Which entries should a single sequential applier deliver next?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Only entry 6."
+        },
+        {
+          "id": "B",
+          "text": "Entries 1 through 6 again."
+        },
+        {
+          "id": "C",
+          "text": "None until a signal is received for each entry."
+        },
+        {
+          "id": "D",
+          "text": "Entries 4, 5, and 6 in order."
+        }
+      ],
+      "answer": "D",
+      "explanation": "The shared-state predicate represents pending work; one wake-up can trigger delivery of multiple entries.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why one signal can apply many entries",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "raft-004",
+      "version": 1,
+      "type": "flashcard",
+      "topics": [
+        "consensus",
+        "concurrency"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "What is the distinction between commitIndex and lastApplied?",
+      "answer": "commitIndex tracks the highest entry known locally to be committed; lastApplied tracks local application progress.",
+      "explanation": "Commitment and application are different stages. Committed entries may still await delivery or execution by the local state machine.",
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Four different stages",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "raft-005",
+      "version": 1,
+      "type": "short_answer",
+      "topics": [
+        "consensus",
+        "concurrency"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-05",
+      "question": "Your Raft applier holds rf.mu while sending to an unbuffered applyCh. The application is slow to receive. Explain the risk and describe a safer single-applier sequence.",
+      "answer": "The send can block while holding the mutex, preventing handlers from acquiring it. Under the lock, choose and copy the next committed entry; unlock, deliver it, then reacquire the lock to record delivery progress.",
+      "explanation": "A single applier preserves ordered delivery while allowing consensus handlers to make progress. Coordinate this design with shutdown and snapshot handling; successful channel delivery is not necessarily completed application execution.",
+      "rubric": [
+        "Identifies blocked send plus held mutex.",
+        "Copies data while protected.",
+        "Unlocks before delivery.",
+        "Preserves one ordered applier and distinguishes delivery from execution."
+      ],
+      "sources": [
+        {
+          "path": "Concepts/Distributed Systems/Raft/Raft Commitment and Application.md",
+          "heading": "Why unlock before sending on `applyCh`",
+          "blob_sha": "ac731dad29defd5409616ec2ab2547dccd4dc7ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Distributed%20Systems/Raft/Raft%20Commitment%20and%20Application.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    }
+  ]
+}

@@ -36,32 +36,34 @@ export function learnsAhead(stored:StoredCard|undefined,now:Date):boolean {
   return !!stored&&(stored.state===State.Learning||stored.state===State.Relearning)&&Date.parse(stored.due)-now.getTime()<=LEARN_AHEAD_MS;
 }
 
-export const matchesFilters=(q:Question,settings:Settings)=>settings.topics.includes(q.topic)&&settings.types.includes(q.type);
+export const topicsOf=(bank:Bank)=>[...new Set(bank.questions.flatMap(q=>q.topics))];
+// A card with several topics matches if any of them is selected
+export const matchesFilters=(q:Question,settings:Settings)=>q.topics.some(topic=>settings.topics.includes(topic))&&settings.types.includes(q.type);
 
 export function dueToday(bank:Bank,store:Store,now:Date):string[] {
   const end=endOfLocalDay(now).getTime();
   return bank.questions.map(keyOfQuestion).filter(key=>!isNew(store,key)&&Date.parse(store.cards[key].due)<end).sort((a,b)=>Date.parse(store.cards[a].due)-Date.parse(store.cards[b].due));
 }
 
-// Stable mixed order (FNV-1a of the key), so one day's new cards aren't all one topic or type
+// Oldest cards first; cards from the same day in a stable mixed order (FNV-1a of the key), so one day's batch isn't all one topic or type
 const mixOrder=(key:string)=>{let hash=0x811c9dc5;for(let index=0;index<key.length;index++){hash^=key.charCodeAt(index);hash=Math.imul(hash,0x01000193)>>>0;}return hash;};
-const newIn=(keys:string[],store:Store)=>keys.filter(key=>isNew(store,key)).sort((a,b)=>mixOrder(a)-mixOrder(b));
+const newIn=(questions:Question[],store:Store)=>questions.filter(q=>isNew(store,keyOfQuestion(q))).sort((a,b)=>a.created.localeCompare(b.created)||mixOrder(keyOfQuestion(a))-mixOrder(keyOfQuestion(b))).map(keyOfQuestion);
 
-export const newKeys=(bank:Bank,store:Store)=>newIn(bank.questions.map(keyOfQuestion),store);
+export const newKeys=(bank:Bank,store:Store)=>newIn(bank.questions,store);
 export const newSlots=(store:Store,now:Date)=>Math.max(0,NEW_PER_DAY-(store.newIntroduced[localDay(now)]||0));
 export const todayQueue=(bank:Bank,store:Store,now:Date)=>[...dueToday(bank,store,now),...newKeys(bank,store).slice(0,newSlots(store,now))];
 
 export function practiceQueue(bank:Bank,store:Store,settings:Settings,now:Date):string[] {
-  const keys=bank.questions.filter(q=>matchesFilters(q,settings)).map(keyOfQuestion);
+  const questions=bank.questions.filter(q=>matchesFilters(q,settings));
   const recall=(key:string)=>scheduler.get_retrievability(cardFor(store,key,now),now,false);
-  return [...keys.filter(key=>!isNew(store,key)).sort((a,b)=>recall(a)-recall(b)),...newIn(keys,store)];
+  return [...questions.map(keyOfQuestion).filter(key=>!isNew(store,key)).sort((a,b)=>recall(a)-recall(b)),...newIn(questions,store)];
 }
 
 export type TopicStats={topic:string;due:number;total:number};
 export function topicStats(bank:Bank,store:Store,now:Date):TopicStats[] {
   const due=new Set(dueToday(bank,store,now));
-  return [...new Set(bank.questions.map(q=>q.topic))].map(topic=>{
-    const keys=bank.questions.filter(q=>q.topic===topic).map(keyOfQuestion);
+  return topicsOf(bank).map(topic=>{
+    const keys=bank.questions.filter(q=>q.topics.includes(topic)).map(keyOfQuestion);
     return {topic,due:keys.filter(key=>due.has(key)).length,total:keys.length};
   });
 }

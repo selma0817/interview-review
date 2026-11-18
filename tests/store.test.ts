@@ -1,11 +1,10 @@
 import {describe,expect,it,vi} from 'vitest';
-import type {Bank,Question} from '../src/types';
 import {defaults,LEGACY_KEY,restore,STORAGE_KEY} from '../src/lib/store';
 import {rate} from '../src/lib/scheduler';
 import {advance,countRating,newSession} from '../src/lib/session';
+import {bankOf,flashcard} from './fixtures';
 
-const flashcard=(id:string):Question=>({id,version:1,type:'flashcard',topic:'Go',difficulty:'easy',language:'en',question:'?',answer:'x',explanation:'',sources:[],review_status:'draft',grading:'self_assessment'});
-const bank:Bank={schema_version:'1.0.0',title:'T',created_date:'x',source_repository:'repo',source_commit:'one',generation_method:'x',review_status:'draft',questions:[flashcard('a'),flashcard('b'),flashcard('c')]};
+const bank=bankOf([flashcard('a'),flashcard('b'),flashcard('c')]);
 const storageWith=(value:string|null):Storage=>({getItem:()=>value,setItem:vi.fn(),removeItem:vi.fn(),clear:vi.fn(),key:vi.fn(),length:1});
 const now=new Date(2026,10,14,9,0);
 
@@ -21,6 +20,13 @@ describe('saved progress',()=>{
     let store=rate(defaults(bank),'a@1',1,now);
     store={...store,session:advance(countRating(newSession('today',['a@1','b@1']),1),store.cards['a@1'],now)};
     expect(restore(bank,storageWith(JSON.stringify(store))).store).toEqual(store);
+  });
+
+  it('falls back to all topics when every saved topic name has been renamed away',()=>{
+    const saved={...defaults(bank),settings:{topics:['Go concurrency'],types:['flashcard']}};
+    expect(restore(bank,storageWith(JSON.stringify(saved))).store.settings).toEqual({topics:['go'],types:['flashcard']});
+    const cleared={...defaults(bank),settings:{topics:[],types:['flashcard']}};
+    expect(restore(bank,storageWith(JSON.stringify(cleared))).store.settings.topics).toEqual([]);
   });
 
   it('drops malformed entries and keeps the session on the same card when earlier cards are gone',()=>{

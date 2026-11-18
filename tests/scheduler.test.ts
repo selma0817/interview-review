@@ -1,12 +1,10 @@
 import {describe,expect,it} from 'vitest';
-import type {Bank,Question} from '../src/types';
 import {defaults} from '../src/lib/store';
 import {dueToday,formatInterval,isNew,NEW_PER_DAY,newKeys,newSlots,practiceQueue,preview,rate,todayQueue} from '../src/lib/scheduler';
 import {advance,autoGrade,countRating,newSession} from '../src/lib/session';
+import {bankOf,flashcard,multipleChoice} from './fixtures';
 
-const flashcard=(id:string,topic='Go'):Question=>({id,version:1,type:'flashcard',topic,difficulty:'easy',language:'en',question:'?',answer:'x',explanation:'',sources:[],review_status:'draft',grading:'self_assessment'});
-const mc:Question={id:'mc',version:1,type:'single_choice',topic:'Go',difficulty:'easy',language:'en',question:'?',answer:'A',explanation:'',sources:[],review_status:'draft',grading:'exact_option_id',options:[{id:'A',text:'a'},{id:'B',text:'b'}]};
-const bankOf=(questions:Question[]):Bank=>({schema_version:'1.0.0',title:'T',created_date:'x',source_repository:'repo',source_commit:'one',generation_method:'x',review_status:'draft',questions});
+const mc=multipleChoice('mc');
 // Local time, so day boundaries follow the machine's time zone like the app does
 const at=(day:number,hour=9,minute=0)=>new Date(2026,10,day,hour,minute);
 
@@ -51,6 +49,11 @@ describe('daily queue',()=>{
     expect(dueToday(bank,store,easyDue)).toContain('c@1');
   });
 
+  it('introduces older cards first, whatever their order in the bank',()=>{
+    const bank=bankOf([flashcard('newest',undefined,{created:'2026-11-20'}),flashcard('oldest',undefined,{created:'2026-11-01'}),flashcard('middle',undefined,{created:'2026-11-10'})]);
+    expect(newKeys(bank,defaults(bank))).toEqual(['oldest@1','middle@1','newest@1']);
+  });
+
   it('treats a new version of a card as a fresh card',()=>{
     const store=rate(defaults(bankOf([flashcard('a')])),'a@1',4,at(14));
     const updated=bankOf([{...flashcard('a'),version:2}]);
@@ -80,11 +83,17 @@ describe('sessions',()=>{
     expect(session.queue).toEqual(['a@1','b@1','a@1']);
   });
 
+  it('lets a card with two topics match a filter on either one',()=>{
+    const crossTopic=flashcard('mvcc','transactions',{topics:['transactions','concurrency']});
+    const bank=bankOf([crossTopic,flashcard('go-1')]);
+    expect(practiceQueue(bank,defaults(bank),{topics:['concurrency'],types:['flashcard']},at(14))).toEqual(['mvcc@1']);
+  });
+
   it('orders practice by lowest recall first, new cards last, within the filters',()=>{
-    const bank=bankOf([flashcard('old'),flashcard('recent'),flashcard('fresh'),flashcard('db','DB')]);
+    const bank=bankOf([flashcard('old'),flashcard('recent'),flashcard('fresh'),flashcard('db','storage-indexing')]);
     let store=rate(defaults(bank),'old@1',4,at(1));
     store=rate(store,'recent@1',4,at(13));
-    expect(practiceQueue(bank,store,{topics:['Go'],types:['flashcard']},at(14))).toEqual(['old@1','recent@1','fresh@1']);
+    expect(practiceQueue(bank,store,{topics:['go'],types:['flashcard']},at(14))).toEqual(['old@1','recent@1','fresh@1']);
   });
 });
 

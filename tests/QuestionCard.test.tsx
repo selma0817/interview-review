@@ -1,11 +1,12 @@
 import {cleanup,render,screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,describe,expect,it,vi} from 'vitest';
-import type {StoredCard} from '../src/types';
+import type {Question,StoredCard} from '../src/types';
 import {QuestionCard,type RatingOption} from '../src/components/QuestionCard';
+import {flashcard,multipleChoice} from './fixtures';
 
-const mc:any={id:'q',version:1,type:'single_choice',topic:'Go',difficulty:'easy',language:'en',question:'Choose `one`',answer:'B',explanation:'Because.',sources:[],review_status:'draft',grading:'exact_option_id',options:[{id:'A',text:'Wrong'},{id:'B',text:'Right'}]};
-const codeReading={...mc,type:'code_reading',grading:'self_assessment',answer:'Reference solution',options:undefined};
+const mc=multipleChoice('q',undefined,{question:'Choose `one`',answer:'B',explanation:'Because.',options:[{id:'A',text:'Wrong'},{id:'B',text:'Right'}]} as Partial<Question>);
+const codeReading=flashcard('q',undefined,{type:'code_reading',question:'Choose `one`',answer:'Reference solution',explanation:'Because.'} as Partial<Question>);
 const card:StoredCard={due:'2026-11-20T09:00:00.000Z',stability:5,difficulty:5,elapsed_days:0,scheduled_days:6,learning_steps:0,reps:3,lapses:1,state:2};
 const all:RatingOption[]=[{grade:1,label:'Again',interval:'10m'},{grade:2,label:'Hard',interval:'2d'},{grade:3,label:'Good',interval:'4d'},{grade:4,label:'Easy',interval:'9d'}];
 const handlers=()=>({onVisit:vi.fn(),onSubmit:vi.fn(),onReveal:vi.fn(),onRate:vi.fn(),onNext:vi.fn()});
