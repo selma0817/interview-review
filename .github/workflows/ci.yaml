@@ -1,8 +1,7 @@
 name: CI
 on:
+  workflow_call:
   pull_request:
-  push:
-    branches: [main]
 permissions:
   contents: read
 jobs:
@@ -21,3 +20,7 @@ jobs:
       - run: npm run build
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e -- --project=chromium
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./dist
