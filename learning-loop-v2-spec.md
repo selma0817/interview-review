@@ -284,6 +284,8 @@ Each is checked against its note before writing. Eight of these notes have no Co
 
 Default: move them into `bank/*.json` with their current IDs, run checks 1–3 once, then one yes/no review. Dropped ones go to `retired-ids.txt`.
 
+**Step 2a (2026-11-18):** moved into `bank/*.json` unchanged, with `checks` set to `not_run` (a third value, used only for these migrated cards). The checks and the yes/no review happen in step 2d.
+
 ## 10. Open items (defaults in bold; confirm or change)
 
 1. Maximum interval: **180 days**. ts-fsrs's default is 36500 (100 years). For interview prep, half a year without seeing a card seemed like enough.

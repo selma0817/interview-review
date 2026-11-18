@@ -1,0 +1,147 @@
+{
+  "topic": "Database indexing",
+  "questions": [
+    {
+      "id": "db-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "An InnoDB table has PRIMARY KEY(id) and a secondary INDEX(email). Which query is covered by the secondary index's stored columns?",
+      "options": [
+        {
+          "id": "A",
+          "text": "SELECT name FROM users WHERE email = ?"
+        },
+        {
+          "id": "B",
+          "text": "SELECT * FROM users WHERE email = ? (the table also contains name)"
+        },
+        {
+          "id": "C",
+          "text": "SELECT id, email FROM users WHERE email = ?"
+        },
+        {
+          "id": "D",
+          "text": "SELECT name, id FROM users WHERE email = ?"
+        }
+      ],
+      "answer": "C",
+      "explanation": "The secondary index contains email and the primary key id. name requires data not stored in this index; optimizer selection and MVCC details are separate concerns.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Covering index",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "db-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "A table already has many indexes. What is the main tradeoff of adding another index for a read query?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Potentially faster reads, but more storage and maintenance for writes affecting that index."
+        },
+        {
+          "id": "B",
+          "text": "Faster reads and writes with no storage cost."
+        },
+        {
+          "id": "C",
+          "text": "It changes the table's transaction isolation level."
+        },
+        {
+          "id": "D",
+          "text": "It removes the need for statistics."
+        }
+      ],
+      "answer": "A",
+      "explanation": "An additional access path consumes storage and must be maintained when relevant data changes. Its value depends on the workload.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Index design principles",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "db-003",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Database indexing",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "What is a back-to-table lookup when using an InnoDB secondary index?",
+      "answer": "Use the primary key found in the secondary index to look up the full row in the clustered index.",
+      "explanation": "It is needed for requested columns absent from the secondary index. A logical lookup need not be a physical disk read if pages are cached.",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "回表 (back-to-table)",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "db-004",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Database indexing",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "An InnoDB table has a regular B-tree index on a DATETIME column created_at, with no functional index. Rewrite this predicate as a half-open range for the same calendar day. Assume all values and literals use the same time convention.\n\n```sql\nSELECT id FROM events\nWHERE DATE(created_at) = '2026-11-04';\n```",
+      "answer": "SELECT id FROM events\nWHERE created_at >= '2026-11-04 00:00:00'\n  AND created_at <  '2026-11-05 00:00:00';",
+      "explanation": "The rewrite exposes a range on the indexed column and includes fractional seconds before midnight. It enables an access path but does not force the optimizer to choose it.",
+      "rubric": [
+        "Inclusive start.",
+        "Exclusive next-day boundary.",
+        "Does not promise a particular execution plan."
+      ],
+      "code_language": "sql",
+      "sources": [
+        {
+          "path": "Concepts/Computer System/Database/Database Indexing.md",
+          "heading": "Applied patterns",
+          "blob_sha": "da28d76e43e4c2ba3602854f9cf42ba92d2c3d39",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Computer%20System/Database/Database%20Indexing.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    }
+  ]
+}

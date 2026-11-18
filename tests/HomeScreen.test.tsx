@@ -1,17 +1,12 @@
 import {cleanup,render,screen,within} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {afterEach,describe,expect,it,vi} from 'vitest';
-import type {Bank} from '../src/types';
 import {HomeScreen} from '../src/components/HomeScreen';
 import {defaults} from '../src/lib/store';
 import {rate} from '../src/lib/scheduler';
+import {bankOf,flashcard,multipleChoice} from './fixtures';
 
-const common={version:1,difficulty:'easy' as const,language:'en',question:'Question',explanation:'Explanation',sources:[],review_status:'draft'};
-const bank={schema_version:'1.0.0',title:'Test',created_date:'x',source_repository:'repo',source_commit:'one',generation_method:'test',review_status:'draft',questions:[
-  {...common,id:'go-1',topic:'Go',type:'single_choice' as const,answer:'A',grading:'exact_option_id' as const,options:[{id:'A',text:'Yes'},{id:'B',text:'No'}]},
-  {...common,id:'go-2',topic:'Go',type:'flashcard' as const,answer:'Answer',grading:'self_assessment' as const},
-  {...common,id:'db-1',topic:'DB',type:'flashcard' as const,answer:'Answer',grading:'self_assessment' as const}
-]} as Bank;
+const bank=bankOf([multipleChoice('go-1'),flashcard('go-2'),flashcard('db-1','DB')]);
 afterEach(cleanup);
 
 describe('HomeScreen',()=>{

@@ -1,0 +1,116 @@
+{
+  "topic": "React state",
+  "questions": [
+    {
+      "id": "react-001",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "React state",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "Why does console.log(count) immediately after setCount(count + 1) read the old count?",
+      "answer": "The handler retains the state snapshot from the render that created it. The setter queues an update rather than mutating that local binding.",
+      "explanation": "A later render receives the updated state; the already-running handler keeps its original binding.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "What a setter does",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "react-002",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "React state",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "When would a request counter belong in useRef rather than useState?",
+      "answer": "When callbacks need a persistent, mutable latest counter but changing it should not itself update the UI.",
+      "explanation": "A ref's current property can be read at callback execution time. State remains appropriate for data displayed by the UI.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Pattern: newest-request token",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "react-003",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "React state",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Assume count is 0 in the render that created this click handler, and no other updates occur. What count appears after this handler's updates are processed?\n\n```tsx\nfunction handleClick() {\n  setCount(c => c + 1);\n  setCount(count + 10);\n  setCount(c => c * 2);\n}\n```",
+      "answer": "20",
+      "explanation": "The queue transforms 0 to 1, replaces it with 10 computed from the handler's snapshot, then transforms 10 to 20.",
+      "rubric": [
+        "Traces 0 → 1 → 10 → 20.",
+        "Explains replacement versus updater semantics."
+      ],
+      "code_language": "tsx",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Value vs updater function",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    },
+    {
+      "id": "react-004",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "React state",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Assume count=0 in this render, no other updates, and all calls occur in one click handler. What state follows? How can the handler increment three times?\n\n```tsx\nfunction handleClick() {\n  setCount(count + 1);\n  setCount(count + 1);\n  setCount(count + 1);\n}\n```",
+      "answer": "The next count is 1. Use three setCount(c => c + 1) calls to produce 3.",
+      "explanation": "All three value expressions read the same 0 snapshot and enqueue replacement with 1. Functional updaters consume the queued prior result.",
+      "rubric": [
+        "Answers 1 for the original.",
+        "Uses functional updaters.",
+        "Does not infer one render per setter."
+      ],
+      "code_language": "tsx",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/TypeScript/React Rendering and State.md",
+          "heading": "Value vs updater function",
+          "blob_sha": "ff30aa958c83a3dccf3844903d4a096dbb6e2a40",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/TypeScript/React%20Rendering%20and%20State.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    }
+  ]
+}

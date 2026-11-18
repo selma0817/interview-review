@@ -1,9 +1,12 @@
 import type {State} from 'ts-fsrs';
 export type QuestionType = 'single_choice'|'flashcard'|'code_reading'|'short_answer';
 export type Source = {path:string;heading:string;blob_sha:string;url:string};
-export type CommonQuestion = {id:string;version:number;topic:string;difficulty:'easy'|'medium'|'hard';language:string;question:string;answer:string;explanation:string;sources:Source[];review_status:string;rubric?:string[];extension_note?:string;code_language?:string};
-export type Question = CommonQuestion & ({type:'single_choice';grading:'exact_option_id';options:{id:string;text:string}[]}|{type:'flashcard'|'code_reading'|'short_answer';grading:'self_assessment'});
-export type Bank = {schema_version:'1.0.0';title:string;created_date:string;source_repository:string;source_commit:string;generation_method:string;review_status:string;questions:Question[];[key:string]:unknown};
+// 'not_run' only appears on cards migrated from v1; new cards pass every check that applies before they reach the bank
+export type CheckResult = 'pass'|'n/a'|'not_run';
+export type Checks = {grounded:CheckResult;blind_answer:CheckResult;code_run:CheckResult};
+export type CommonQuestion = {id:string;version:number;topic:string;difficulty:'easy'|'medium'|'hard';created:string;question:string;answer:string;explanation:string;sources:Source[];provenance:string;checks:Checks;rubric?:string[];extension_note?:string;code_language?:string};
+export type Question = CommonQuestion & ({type:'single_choice';options:{id:string;text:string}[]}|{type:'flashcard'|'code_reading'|'short_answer'});
+export type Bank = {schema_version:'2.0.0';built_at:string;questions:Question[]};
 // 1 Again · 2 Hard · 3 Good · 4 Easy, the same numbers as ts-fsrs Rating
 export type Grade = 1|2|3|4;
 // ts-fsrs Card and ReviewLog, with dates kept as ISO strings so they survive JSON

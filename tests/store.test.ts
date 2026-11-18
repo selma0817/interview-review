@@ -1,11 +1,10 @@
 import {describe,expect,it,vi} from 'vitest';
-import type {Bank,Question} from '../src/types';
 import {defaults,LEGACY_KEY,restore,STORAGE_KEY} from '../src/lib/store';
 import {rate} from '../src/lib/scheduler';
 import {advance,countRating,newSession} from '../src/lib/session';
+import {bankOf,flashcard} from './fixtures';
 
-const flashcard=(id:string):Question=>({id,version:1,type:'flashcard',topic:'Go',difficulty:'easy',language:'en',question:'?',answer:'x',explanation:'',sources:[],review_status:'draft',grading:'self_assessment'});
-const bank:Bank={schema_version:'1.0.0',title:'T',created_date:'x',source_repository:'repo',source_commit:'one',generation_method:'x',review_status:'draft',questions:[flashcard('a'),flashcard('b'),flashcard('c')]};
+const bank=bankOf([flashcard('a'),flashcard('b'),flashcard('c')]);
 const storageWith=(value:string|null):Storage=>({getItem:()=>value,setItem:vi.fn(),removeItem:vi.fn(),clear:vi.fn(),key:vi.fn(),length:1});
 const now=new Date(2026,10,14,9,0);
 

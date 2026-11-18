@@ -1,12 +1,10 @@
 import {describe,expect,it} from 'vitest';
-import type {Bank,Question} from '../src/types';
 import {defaults} from '../src/lib/store';
 import {dueToday,formatInterval,isNew,NEW_PER_DAY,newKeys,newSlots,practiceQueue,preview,rate,todayQueue} from '../src/lib/scheduler';
 import {advance,autoGrade,countRating,newSession} from '../src/lib/session';
+import {bankOf,flashcard,multipleChoice} from './fixtures';
 
-const flashcard=(id:string,topic='Go'):Question=>({id,version:1,type:'flashcard',topic,difficulty:'easy',language:'en',question:'?',answer:'x',explanation:'',sources:[],review_status:'draft',grading:'self_assessment'});
-const mc:Question={id:'mc',version:1,type:'single_choice',topic:'Go',difficulty:'easy',language:'en',question:'?',answer:'A',explanation:'',sources:[],review_status:'draft',grading:'exact_option_id',options:[{id:'A',text:'a'},{id:'B',text:'b'}]};
-const bankOf=(questions:Question[]):Bank=>({schema_version:'1.0.0',title:'T',created_date:'x',source_repository:'repo',source_commit:'one',generation_method:'x',review_status:'draft',questions});
+const mc=multipleChoice('mc');
 // Local time, so day boundaries follow the machine's time zone like the app does
 const at=(day:number,hour=9,minute=0)=>new Date(2026,10,day,hour,minute);
 
@@ -49,6 +47,11 @@ describe('daily queue',()=>{
     const easyDue=new Date(store.cards['c@1'].due);
     expect(easyDue.getTime()).toBeGreaterThan(at(15).getTime());
     expect(dueToday(bank,store,easyDue)).toContain('c@1');
+  });
+
+  it('introduces older cards first, whatever their order in the bank',()=>{
+    const bank=bankOf([flashcard('newest',undefined,{created:'2026-11-20'}),flashcard('oldest',undefined,{created:'2026-11-01'}),flashcard('middle',undefined,{created:'2026-11-10'})]);
+    expect(newKeys(bank,defaults(bank))).toEqual(['oldest@1','middle@1','newest@1']);
   });
 
   it('treats a new version of a card as a fresh card',()=>{

@@ -32,7 +32,7 @@ Run all local checks:
 
 ```bash
 npm run typecheck
-npm run validate:bank
+npm run bank:validate
 npm test
 npm run build
 npm run test:e2e
@@ -49,9 +49,20 @@ Then open `http://localhost:4173/interview-review/`. Playwright starts its own p
 
 ## Question bank
 
-The runtime bank is `public/questions.json`. Replace that file with a complete bank conforming to schema version `1.0.0`, then run `npm run validate:bank`. The validator rejects the entire malformed bank and the app shows a retryable error; it does not silently omit questions. Keep learner data out of this file. Progress is keyed by question ID and version, so increment a question's version when its learning content changes.
+Cards live in **`bank/<topic>.json`**, one file per topic, as `{"topic": "...", "questions": [...]}` (schema `2.0.0`, defined in `src/lib/questionBank.ts`). `public/questions.json` is **generated** by `npm run bank:build` (part of `npm run build` and `npm run dev`) and is not committed. Edit the bank through the scripts, not by hand:
 
-The original supplied `questions.json` remains at the repository root for provenance. At implementation time it was copied byte-for-byte to `public/questions.json`.
+| Command | What it does |
+|---|---|
+| `npm run bank:validate` | Checks every topic file: schema, unique IDs across files, no retired IDs, multiple-choice answers among their options, stamped sources. CI runs it |
+| `npm run bank:build` | Validates, then writes `public/questions.json` |
+| `npm run bank:add -- drafts.json [--vault ../knowledge_base] [--dry-run]` | Adds draft cards (written by the distill skill, without `id` or source hashes). Assigns each a fresh ID; checks that each cited heading exists in a committed, pushed vault note; stamps `blob_sha` and a URL pinned to that commit; appends to the topic file. Doesn't commit |
+| `npm run bank:remove -- <id> [<id>…]` | Removes cards and records their IDs in `bank/retired-ids.txt` |
+
+- **IDs are never reused.** Progress is keyed by `id@version`, so a reused ID would hand a new card a deleted card's review history. That's why `bank:add` picks IDs (`<topic>-<6 random characters>`) and skips anything in `retired-ids.txt`.
+- **Bump `version`** only when a card's meaning changes. That gives it a fresh review schedule.
+- **Card fields:** `created`, `provenance` (the session moment it came from) and `checks` (`grounded`, `blind_answer`, `code_run`: `pass`, `n/a`, or `not_run` for cards migrated from v1). Unknown fields are rejected.
+
+The 30 v1 questions were migrated unchanged into `bank/` on 2026-11-18, with `checks` set to `not_run` until they go through the three checks. The original v1 file remains at the repository root (`questions.json`) for provenance.
 
 ## Base path
 

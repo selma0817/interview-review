@@ -1,4 +1,9 @@
 import {describe,expect,it} from 'vitest';import {parseBank} from '../src/lib/questionBank';
-const base={schema_version:'1.0.0',title:'Test',created_date:'2026-01-01',source_repository:'https://example.com',source_commit:'abc',generation_method:'test',review_status:'draft'};
-const q={id:'q1',version:1,type:'single_choice',topic:'Go',difficulty:'easy',language:'en',question:'Q?',answer:'B',explanation:'Why',sources:[],review_status:'draft',grading:'exact_option_id',options:[{id:'A',text:'No'},{id:'B',text:'Yes'}]};
-describe('question bank validation',()=>{it('accepts the contract',()=>expect(parseBank({...base,questions:[q]}).questions).toHaveLength(1));it('rejects duplicate ids',()=>expect(()=>parseBank({...base,questions:[q,q]})).toThrow(/Duplicate question ID/));it('rejects an invalid answer reference',()=>expect(()=>parseBank({...base,questions:[{...q,answer:'Z'}]})).toThrow(/missing/));it('rejects unsupported types',()=>expect(()=>parseBank({...base,questions:[{...q,type:'essay'}]})).toThrow())});
+import {bankOf,flashcard,multipleChoice} from './fixtures';
+describe('question bank validation (schema 2.0.0)',()=>{
+  it('accepts the contract',()=>expect(parseBank(bankOf([multipleChoice('q1'),flashcard('q2')])).questions).toHaveLength(2));
+  it('rejects duplicate ids',()=>expect(()=>parseBank(bankOf([flashcard('q1'),flashcard('q1')]))).toThrow(/Duplicate question ID/));
+  it('rejects an invalid answer reference',()=>expect(()=>parseBank(bankOf([multipleChoice('q1',undefined,{answer:'Z'})]))).toThrow(/missing/));
+  it('rejects unsupported types and leftover v1 fields',()=>{expect(()=>parseBank(bankOf([{...flashcard('q1'),type:'essay'} as any]))).toThrow();expect(()=>parseBank(bankOf([{...flashcard('q1'),grading:'self_assessment'} as any]))).toThrow();});
+  it('requires every source to be stamped with a blob hash and URL',()=>expect(()=>parseBank(bankOf([flashcard('q1',undefined,{sources:[{path:'a.md',heading:'H'} as any]})]))).toThrow());
+});

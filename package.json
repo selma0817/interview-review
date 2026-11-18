@@ -4,12 +4,15 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run bank:build && vite",
     "typecheck": "tsc --noEmit",
-    "validate:bank": "node --import tsx scripts/validate-bank.ts",
+    "bank:validate": "node --import tsx scripts/bank.ts validate",
+    "bank:build": "node --import tsx scripts/bank.ts build",
+    "bank:add": "node --import tsx scripts/bank.ts add",
+    "bank:remove": "node --import tsx scripts/bank.ts remove",
     "test": "vitest run",
     "test:e2e": "playwright test",
-    "build": "npm run typecheck && vite build",
+    "build": "npm run bank:build && npm run typecheck && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

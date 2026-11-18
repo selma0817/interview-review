@@ -1,0 +1,282 @@
+{
+  "topic": "Go concurrency",
+  "questions": [
+    {
+      "id": "go-001",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "An open buffered channel has capacity 2 and already holds 2 values. A goroutine sends another value, with no receiver currently running. What happens?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The oldest value is overwritten."
+        },
+        {
+          "id": "B",
+          "text": "The sender blocks until space becomes available."
+        },
+        {
+          "id": "C",
+          "text": "The send immediately panics."
+        },
+        {
+          "id": "D",
+          "text": "The channel grows automatically."
+        }
+      ],
+      "answer": "B",
+      "explanation": "A full buffer makes a send wait; capacity is fixed. Fullness alone does not cause a panic.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Buffered channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "go-002",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Two receive cases in a Go select are both ready. There is no other code affecting readiness. Which statement is correct?",
+      "options": [
+        {
+          "id": "A",
+          "text": "The first case in source order always wins."
+        },
+        {
+          "id": "B",
+          "text": "Both case bodies execute."
+        },
+        {
+          "id": "C",
+          "text": "The case whose channel was created first wins."
+        },
+        {
+          "id": "D",
+          "text": "One ready case is chosen pseudo-randomly."
+        }
+      ],
+      "answer": "D",
+      "explanation": "select executes one selected case, not all ready cases. Source order does not assign priority.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "select",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "go-003",
+      "version": 1,
+      "type": "single_choice",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Two workers are registered with a WaitGroup before launch. Each prints its own label and then calls Done. Main calls Wait and then prints 'done'. What is guaranteed?",
+      "options": [
+        {
+          "id": "A",
+          "text": "Both worker labels precede 'done', but their relative order is unspecified."
+        },
+        {
+          "id": "B",
+          "text": "Workers print in launch order."
+        },
+        {
+          "id": "C",
+          "text": "Only one worker can execute at a time."
+        },
+        {
+          "id": "D",
+          "text": "Wait cancels whichever worker finishes last."
+        }
+      ],
+      "answer": "A",
+      "explanation": "Wait provides a completion barrier. It does not order the workers or limit concurrency.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/sync.WaitGroup.md",
+          "heading": "WaitGroup guarantees completion, not ordering",
+          "blob_sha": "a07d1633ad34eaf799cd25b7de502b743dc908ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/sync.WaitGroup.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "not_run",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "go-004",
+      "version": 1,
+      "type": "flashcard",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "What does ok=false mean in v, ok := <-ch?",
+      "answer": "The channel is closed and its buffered values have all been received; v is the element type's zero value.",
+      "explanation": "Closing does not discard buffered values. Those values are received with ok=true before closed-and-drained receives return ok=false.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Receiving from a closed channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    },
+    {
+      "id": "go-005",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "easy",
+      "created": "2026-11-05",
+      "question": "What does this complete program print?\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    ch := make(chan int, 1)\n    ch <- 7\n    close(ch)\n    a, okA := <-ch\n    b, okB := <-ch\n    fmt.Println(a, okA, b, okB)\n}\n```",
+      "answer": "7 true 0 false",
+      "explanation": "The buffered 7 is drained first. Only the next receive observes closed-and-empty.",
+      "rubric": [
+        "Preserves the buffered value.",
+        "Distinguishes ok=true from ok=false."
+      ],
+      "code_language": "go",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Receiving from a closed channel",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    },
+    {
+      "id": "go-006",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Is 'worker' guaranteed to print before this complete program exits? Identify the bug and fix it.\n\n```go\npackage main\nimport (\"fmt\"; \"sync\")\nfunc main() {\n    var wg sync.WaitGroup\n    go func() {\n        wg.Add(1)\n        defer wg.Done()\n        fmt.Println(\"worker\")\n    }()\n    wg.Wait()\n}\n```",
+      "answer": "No. Move wg.Add(1) before launching the goroutine.",
+      "explanation": "Wait can see a zero counter before the worker is scheduled and return immediately. Scheduling may also let the worker print, so there is no single guaranteed output.",
+      "rubric": [
+        "Explains the zero-counter schedule.",
+        "Moves Add before go.",
+        "Does not claim it always fails."
+      ],
+      "code_language": "go",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/sync.WaitGroup.md",
+          "heading": "Add before starting the goroutine",
+          "blob_sha": "a07d1633ad34eaf799cd25b7de502b743dc908ad",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/sync.WaitGroup.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    },
+    {
+      "id": "go-007",
+      "version": 1,
+      "type": "code_reading",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Does this complete program terminate normally? Explain and suggest a structural fix.\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    jobs := make(chan int)\n    results := make(chan int)\n    go func() {\n        for j := range jobs { results <- j * 2 }\n        close(results)\n    }()\n    jobs <- 1\n    jobs <- 2\n    close(jobs)\n    for r := range results { fmt.Println(r) }\n}\n```",
+      "answer": "No. Main blocks sending job 2 while the worker blocks sending result 2. Send jobs and close jobs in a separate producer goroutine while main consumes results.",
+      "explanation": "With one worker and unbuffered channels, neither side can reach its next receive. The sole worker may close results after jobs is drained because no other result sender exists.",
+      "rubric": [
+        "Identifies both blocking sends.",
+        "Enables concurrent production and result consumption.",
+        "Preserves safe channel closure."
+      ],
+      "code_language": "go",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Deadlock pattern: main sends all jobs before receiving results",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "not_run"
+      }
+    },
+    {
+      "id": "go-008",
+      "version": 1,
+      "type": "short_answer",
+      "topic": "Go concurrency",
+      "difficulty": "medium",
+      "created": "2026-11-05",
+      "question": "Design the shutdown sequence for a finite worker pool: one producer, several workers, and one result consumer. Who closes jobs and results, and why?",
+      "answer": "The producer closes jobs after its final send. Workers drain jobs and finish their result sends, then signal completion. A coordinator waits for all workers and closes results; the consumer drains results concurrently.",
+      "explanation": "Closing results after all senders finish avoids send-on-closed-channel panics. Concurrent consumption avoids circular blocking; closing jobs lets workers exit their range loops.",
+      "rubric": [
+        "Producer closes jobs.",
+        "All workers finish sending before results closes.",
+        "Consumer drains concurrently.",
+        "Does not require output order to match job order."
+      ],
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Concurrency/Goroutines and Channels.md",
+          "heading": "Why close `results` after `wg.Wait()`",
+          "blob_sha": "fb4da5e385e272891ead0cc049caa01fbadc4fb8",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/160d470adc78cc4513d81b23e82c1a1747f0ff40/Concepts/Programming%20Languages/Go/Concurrency/Goroutines%20and%20Channels.md"
+        }
+      ],
+      "provenance": "Migrated from the v1 bank (generated with ChatGPT from 9 notes on 2026-11-05); not yet through the three checks.",
+      "checks": {
+        "grounded": "not_run",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      }
+    }
+  ]
+}
