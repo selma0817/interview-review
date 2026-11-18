@@ -1,4 +1,4 @@
-import {readFile,writeFile} from 'node:fs/promises';
+import {mkdir,readFile,writeFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {join,resolve} from 'node:path';
 import {addCards,gitVault,readBank,removeCards,retopicCards,validateBank,writeBank} from './bankLib';
@@ -22,6 +22,8 @@ async function main([command,...args]:string[]) {
     console.log(`Valid bank: ${built.questions.length} cards in ${bank.files.size} topic files, ${new Set(built.questions.map(q=>q.type)).size} types, ${bank.topics.length} allowed topics, ${bank.retired.size} retired IDs.`);
   } else if(command==='build'){
     const built=validateBank(bank);
+    // public/ only holds this generated file, so a fresh checkout (CI) doesn't have the folder yet
+    await mkdir(join(root,'public'),{recursive:true});
     await writeFile(join(root,'public','questions.json'),`${JSON.stringify(built)}\n`);
     console.log(`Built public/questions.json: ${built.questions.length} cards.`);
   } else if(command==='add'){
