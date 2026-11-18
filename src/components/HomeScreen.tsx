@@ -1,11 +1,11 @@
 import type {Bank,QuestionType,SessionKind,Settings,Store} from '../types';
 import {TYPE_LABELS} from '../lib/session';
-import {dueToday,matchesFilters,newKeys,newSlots,topicStats} from '../lib/scheduler';
+import {dueToday,matchesFilters,newKeys,newSlots,topicsOf,topicStats} from '../lib/scheduler';
 
 type Props={bank:Bank;store:Store;now:Date;onSettings:(settings:Settings)=>void;onStart:(kind:SessionKind)=>void;onResume:()=>void;onReset:()=>void};
 
 export function HomeScreen({bank,store,now,onSettings,onStart,onResume,onReset}:Props){
-  const topics=[...new Set(bank.questions.map(q=>q.topic))];
+  const topics=topicsOf(bank);
   const types=[...new Set(bank.questions.map(q=>q.type))];
   const due=dueToday(bank,store,now).length;
   const fresh=Math.min(newKeys(bank,store).length,newSlots(store,now));

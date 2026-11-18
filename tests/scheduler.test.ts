@@ -83,6 +83,12 @@ describe('sessions',()=>{
     expect(session.queue).toEqual(['a@1','b@1','a@1']);
   });
 
+  it('lets a card with two topics match a filter on either one',()=>{
+    const crossTopic=flashcard('mvcc','Database',{topics:['Database','Concurrency']});
+    const bank=bankOf([crossTopic,flashcard('go-1')]);
+    expect(practiceQueue(bank,defaults(bank),{topics:['Concurrency'],types:['flashcard']},at(14))).toEqual(['mvcc@1']);
+  });
+
   it('orders practice by lowest recall first, new cards last, within the filters',()=>{
     const bank=bankOf([flashcard('old'),flashcard('recent'),flashcard('fresh'),flashcard('db','DB')]);
     let store=rate(defaults(bank),'old@1',4,at(1));

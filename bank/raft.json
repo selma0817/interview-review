@@ -5,7 +5,9 @@
       "id": "raft-001",
       "version": 1,
       "type": "single_choice",
-      "topic": "Raft",
+      "topics": [
+        "Raft"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "A voter ends at (lastLogTerm=4, lastLogIndex=100). A candidate ends at (5, 80). Considering only log freshness, is the candidate eligible?",
@@ -48,7 +50,9 @@
       "id": "raft-002",
       "version": 1,
       "type": "single_choice",
-      "topic": "Raft",
+      "topics": [
+        "Raft"
+      ],
       "difficulty": "hard",
       "created": "2026-11-05",
       "question": "A term-7 leader observes an uncommitted term-6 entry on a majority. It has not yet committed a term-7 entry after it. Can it newly commit that old entry solely by counting these replicas?",
@@ -91,7 +95,9 @@
       "id": "raft-003",
       "version": 1,
       "type": "single_choice",
-      "topic": "Raft",
+      "topics": [
+        "Raft"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "A Raft peer has lastApplied=3 and commitIndex=6. Which entries should a single sequential applier deliver next?",
@@ -134,7 +140,9 @@
       "id": "raft-004",
       "version": 1,
       "type": "flashcard",
-      "topic": "Raft",
+      "topics": [
+        "Raft"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "What is the distinction between commitIndex and lastApplied?",
@@ -159,7 +167,9 @@
       "id": "raft-005",
       "version": 1,
       "type": "short_answer",
-      "topic": "Raft",
+      "topics": [
+        "Raft"
+      ],
       "difficulty": "hard",
       "created": "2026-11-05",
       "question": "Your Raft applier holds rf.mu while sending to an unbuffered applyCh. The application is slow to receive. Explain the risk and describe a safer single-applier sequence.",

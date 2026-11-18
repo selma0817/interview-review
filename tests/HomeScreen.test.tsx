@@ -25,6 +25,14 @@ describe('HomeScreen',()=>{
     expect(screen.queryByRole('button',{name:/marked/i})).not.toBeInTheDocument();
   });
 
+  it('counts a two-topic card in both topic tiles but once in Due',()=>{
+    const crossTopic=bankOf([flashcard('mvcc','Database',{topics:['Database','Concurrency']}),flashcard('go-1')]);
+    const store=rate(defaults(crossTopic),'mvcc@1',1,new Date(2026,10,14,9,0));
+    render(<HomeScreen bank={crossTopic} store={store} now={new Date(2026,10,14,9,5)} onSettings={vi.fn()} onStart={vi.fn()} onResume={vi.fn()} onReset={vi.fn()}/>);
+    for(const topic of ['Database','Concurrency'])expect(within(screen.getByRole('heading',{level:3,name:topic}).closest('article')!).getByText('1 due')).toBeInTheDocument();
+    expect(within(screen.getByRole('region',{name:'Today'})).getByText('Due').previousSibling).toHaveTextContent('1');
+  });
+
   it('disables practice when the filters match nothing',()=>{
     const store={...defaults(bank),settings:{topics:['Go'],types:[]}};
     render(<HomeScreen bank={bank} store={store} now={new Date(2026,10,14,9,0)} onSettings={vi.fn()} onStart={vi.fn()} onResume={vi.fn()} onReset={vi.fn()}/>);

@@ -6,6 +6,7 @@ import {cardSchema,checkOptions,parseBank} from '../src/lib/questionBank';
 import type {Bank,Question,Source} from '../src/types';
 
 export const RETIRED_FILE='retired-ids.txt';
+// A card lives in the file of its first topic
 export type BankFile={topic:string;questions:Question[]};
 // Every topic file keyed by its file name, plus the IDs that may never be handed out again
 export type BankDir={files:Map<string,BankFile>;retired:Set<string>};
@@ -13,6 +14,20 @@ export type BankDir={files:Map<string,BankFile>;retired:Set<string>};
 export const slug=(topic:string)=>topic.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');
 const fileFor=(topic:string)=>`${slug(topic)}.json`;
 const allCards=(bank:BankDir)=>[...bank.files.values()].flatMap(file=>file.questions);
+
+// Topics come from the vault folders of the cited notes, never from the LLM: the folder under the area
+// (Concepts/Computer System/Database/… → "Database"), or the area itself for a note directly in it (Concepts/LLM/… → "LLM")
+export function deriveTopics(sources:{path:string}[]):string[] {
+  return [...new Set(sources.map(({path})=>{
+    const folders=path.split('/').slice(0,-1);
+    if(folders[0]==='Concepts')folders.shift();
+    const topic=folders[1]??folders[0];
+    if(!topic)throw new Error(`Can't derive a topic from ${path}: the note isn't inside a topic folder`);
+    return topic;
+  }))];
+}
+
+const sameList=(a:string[],b:string[])=>a.length===b.length&&a.every((item,index)=>item===b[index]);
 
 export async function readBank(dir:string):Promise<BankDir> {
   const files=new Map<string,BankFile>();
@@ -32,8 +47,13 @@ export function validateBank(bank:BankDir,builtAt=new Date().toISOString()):Bank
   for(const [name,file] of bank.files){
     if(typeof file?.topic!=='string'||!Array.isArray(file.questions))throw new Error(`${name}: expected {"topic": "...", "questions": [...]}`);
     if(name!==fileFor(file.topic))throw new Error(`${name}: topic "${file.topic}" belongs in ${fileFor(file.topic)}`);
-    for(const q of file.questions){
-      if(q.topic!==file.topic)throw new Error(`${name}: card ${q.id} has topic "${q.topic}", expected "${file.topic}"`);
+    for(const value of file.questions){
+      const parsed=cardSchema.safeParse(value);
+      if(!parsed.success){const issue=parsed.error.issues[0];throw new Error(`${name}: card ${(value as {id?:string})?.id??'(no id)'}: ${issue.path.join('.')||'card'}: ${issue.message}`);}
+      const q=parsed.data as Question;
+      const derived=deriveTopics(q.sources);
+      if(!sameList(q.topics,derived))throw new Error(`${name}: card ${q.id} has topics ${JSON.stringify(q.topics)}, but its notes' folders give ${JSON.stringify(derived)}`);
+      if(q.topics[0]!==file.topic)throw new Error(`${name}: card ${q.id} belongs in ${fileFor(q.topics[0])}, the file of its first topic "${q.topics[0]}"`);
       if(seen.has(q.id))throw new Error(`Card ID ${q.id} appears in both ${seen.get(q.id)} and ${name}`);
       if(bank.retired.has(q.id))throw new Error(`${name}: card ID ${q.id} is retired and can't be used again`);
       seen.set(q.id,name);
@@ -89,15 +109,19 @@ export function stampSources(sources:{path:string;heading:string}[],vault:Vault)
   });
 }
 
-type Draft=Record<string,unknown>&{topic:string;sources:{path:string;heading:string}[]};
+type Draft=Record<string,unknown>&{sources:{path:string;heading:string}[]};
 function asDraft(value:unknown,index:number):Draft {
   const draft=value as Partial<Draft>;
   if(!draft||typeof draft!=='object')throw new Error(`Draft ${index+1} is not an object`);
-  if('id' in draft)throw new Error(`Draft ${index+1} has an id; IDs are assigned by bank:add`);
-  if(typeof draft.topic!=='string'||!draft.topic.trim())throw new Error(`Draft ${index+1} needs a topic`);
+  for(const field of ['id','topic','topics'])if(field in draft)throw new Error(`Draft ${index+1} has "${field}"; bank:add assigns IDs and derives topics from the cited notes' folders`);
   if(!Array.isArray(draft.sources)||!draft.sources.length||!draft.sources.every(s=>s&&typeof s.path==='string'&&typeof s.heading==='string'))throw new Error(`Draft ${index+1} needs sources: [{path, heading}]`);
   return draft as Draft;
 }
+
+// Same key order as every other card, so a card PR's diff reads top to bottom
+const FIELD_ORDER=['id','version','type','topics','difficulty','created','question','options','answer','explanation','rubric','code_language','extension_note','sources','provenance','checks'];
+// Unknown fields stay (at the end) so the strict schema still rejects them
+const ordered=(card:Record<string,unknown>)=>Object.fromEntries([...FIELD_ORDER.filter(field=>field in card),...Object.keys(card).filter(field=>!FIELD_ORDER.includes(field))].map(field=>[field,card[field]]));
 
 export function addCards(bank:BankDir,drafts:unknown[],vault:Vault,today:string,random?:(max:number)=>number):{bank:BankDir;added:{id:string;file:string}[]} {
   const files=new Map([...bank.files].map(([name,file])=>[name,{...file,questions:[...file.questions]}]));
@@ -105,12 +129,14 @@ export function addCards(bank:BankDir,drafts:unknown[],vault:Vault,today:string,
   const added:{id:string;file:string}[]=[];
   drafts.forEach((value,index)=>{
     const draft=asDraft(value,index);
-    const id=newId(draft.topic,taken,random);
+    const sources=stampSources(draft.sources,vault);
+    const topics=deriveTopics(sources);
+    const id=newId(topics[0],taken,random);
     taken.add(id);
-    const card=cardSchema.parse({...draft,id,version:draft.version??1,created:draft.created??today,sources:stampSources(draft.sources,vault)}) as Question;
+    const card=cardSchema.parse(ordered({...draft,id,version:draft.version??1,topics,created:draft.created??today,sources})) as Question;
     checkOptions(card);
-    const name=fileFor(card.topic);
-    if(!files.has(name))files.set(name,{topic:card.topic,questions:[]});
+    const name=fileFor(topics[0]);
+    if(!files.has(name))files.set(name,{topic:topics[0],questions:[]});
     files.get(name)!.questions.push(card);
     added.push({id,file:name});
   });

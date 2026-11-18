@@ -22,6 +22,13 @@ describe('saved progress',()=>{
     expect(restore(bank,storageWith(JSON.stringify(store))).store).toEqual(store);
   });
 
+  it('falls back to all topics when every saved topic name has been renamed away',()=>{
+    const saved={...defaults(bank),settings:{topics:['Go concurrency'],types:['flashcard']}};
+    expect(restore(bank,storageWith(JSON.stringify(saved))).store.settings).toEqual({topics:['Go'],types:['flashcard']});
+    const cleared={...defaults(bank),settings:{topics:[],types:['flashcard']}};
+    expect(restore(bank,storageWith(JSON.stringify(cleared))).store.settings.topics).toEqual([]);
+  });
+
   it('drops malformed entries and keeps the session on the same card when earlier cards are gone',()=>{
     const store=rate(defaults(bank),'a@1',3,now);
     const saved={...store,cards:{...store.cards,'b@1':{due:'not a date'}},log:[...store.log,{key:'b@1',rating:9}],session:{...newSession('today',['gone@1','a@1','b@1']),cursor:2,visit:{revealed:true}}};

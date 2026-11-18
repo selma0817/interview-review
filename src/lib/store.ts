@@ -1,12 +1,13 @@
 import type {Bank,Grade,LogEntry,Session,Settings,Store,StoredCard} from '../types';
 import {keyOf} from '../types';
+import {topicsOf} from './scheduler';
 
 export const STORAGE_KEY='interview-review:fsrs:v1';
 // v1 kept completion and "needs review" marks here; they only held test clicks, so v2 drops them
 export const LEGACY_KEY='cs-review:progress:v1';
 
 export function defaults(bank:Bank):Store {
-  return {storageVersion:1,cards:{},log:[],newIntroduced:{},settings:{topics:[...new Set(bank.questions.map(q=>q.topic))],types:[...new Set(bank.questions.map(q=>q.type))]}};
+  return {storageVersion:1,cards:{},log:[],newIntroduced:{},settings:{topics:topicsOf(bank),types:[...new Set(bank.questions.map(q=>q.type))]}};
 }
 
 const isObject=(value:unknown):value is Record<string,unknown>=>!!value&&typeof value==='object';
@@ -62,8 +63,10 @@ export function restore(bank:Bank,storage:Storage=localStorage):{store:Store;not
     const newIntroduced:Store['newIntroduced']={};
     if(isObject(saved.newIntroduced))for(const [day,count] of Object.entries(saved.newIntroduced))if(isCount(count))newIntroduced[day]=Number(count);
     const savedSettings=(isObject(saved.settings)?saved.settings:{}) as Partial<Settings>;
+    const keptTopics=Array.isArray(savedSettings.topics)?savedSettings.topics.filter((x):x is string=>typeof x==='string'&&clean.settings.topics.includes(x)):clean.settings.topics;
     const settings:Settings={
-      topics:Array.isArray(savedSettings.topics)?savedSettings.topics.filter((x):x is string=>typeof x==='string'&&clean.settings.topics.includes(x)):clean.settings.topics,
+      // If every saved topic name is gone (topics were renamed), fall back to all topics rather than an empty filter
+      topics:keptTopics.length||!savedSettings.topics?.length?keptTopics:clean.settings.topics,
       types:Array.isArray(savedSettings.types)?savedSettings.types.filter((x):x is Settings['types'][number]=>typeof x==='string'&&clean.settings.types.includes(x as Settings['types'][number])):clean.settings.types
     };
     const {session,notice}=restoreSession(saved.session,new Set(bank.questions.map(q=>keyOf(q.id,q.version))));

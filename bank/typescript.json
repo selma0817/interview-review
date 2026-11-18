@@ -1,11 +1,13 @@
 {
-  "topic": "React state",
+  "topic": "TypeScript",
   "questions": [
     {
       "id": "react-001",
       "version": 1,
       "type": "flashcard",
-      "topic": "React state",
+      "topics": [
+        "TypeScript"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "Why does console.log(count) immediately after setCount(count + 1) read the old count?",
@@ -30,7 +32,9 @@
       "id": "react-002",
       "version": 1,
       "type": "flashcard",
-      "topic": "React state",
+      "topics": [
+        "TypeScript"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "When would a request counter belong in useRef rather than useState?",
@@ -55,7 +59,9 @@
       "id": "react-003",
       "version": 1,
       "type": "code_reading",
-      "topic": "React state",
+      "topics": [
+        "TypeScript"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Assume count is 0 in the render that created this click handler, and no other updates occur. What count appears after this handler's updates are processed?\n\n```tsx\nfunction handleClick() {\n  setCount(c => c + 1);\n  setCount(count + 10);\n  setCount(c => c * 2);\n}\n```",
@@ -85,7 +91,9 @@
       "id": "react-004",
       "version": 1,
       "type": "code_reading",
-      "topic": "React state",
+      "topics": [
+        "TypeScript"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Assume count=0 in this render, no other updates, and all calls occur in one click handler. What state follows? How can the handler increment three times?\n\n```tsx\nfunction handleClick() {\n  setCount(count + 1);\n  setCount(count + 1);\n  setCount(count + 1);\n}\n```",

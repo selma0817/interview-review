@@ -1,11 +1,13 @@
 {
-  "topic": "Go concurrency",
+  "topic": "Go",
   "questions": [
     {
       "id": "go-001",
       "version": 1,
       "type": "single_choice",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "An open buffered channel has capacity 2 and already holds 2 values. A goroutine sends another value, with no receiver currently running. What happens?",
@@ -48,7 +50,9 @@
       "id": "go-002",
       "version": 1,
       "type": "single_choice",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Two receive cases in a Go select are both ready. There is no other code affecting readiness. Which statement is correct?",
@@ -91,7 +95,9 @@
       "id": "go-003",
       "version": 1,
       "type": "single_choice",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Two workers are registered with a WaitGroup before launch. Each prints its own label and then calls Done. Main calls Wait and then prints 'done'. What is guaranteed?",
@@ -134,7 +140,9 @@
       "id": "go-004",
       "version": 1,
       "type": "flashcard",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "What does ok=false mean in v, ok := <-ch?",
@@ -159,7 +167,9 @@
       "id": "go-005",
       "version": 1,
       "type": "code_reading",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "What does this complete program print?\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    ch := make(chan int, 1)\n    ch <- 7\n    close(ch)\n    a, okA := <-ch\n    b, okB := <-ch\n    fmt.Println(a, okA, b, okB)\n}\n```",
@@ -189,7 +199,9 @@
       "id": "go-006",
       "version": 1,
       "type": "code_reading",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Is 'worker' guaranteed to print before this complete program exits? Identify the bug and fix it.\n\n```go\npackage main\nimport (\"fmt\"; \"sync\")\nfunc main() {\n    var wg sync.WaitGroup\n    go func() {\n        wg.Add(1)\n        defer wg.Done()\n        fmt.Println(\"worker\")\n    }()\n    wg.Wait()\n}\n```",
@@ -220,7 +232,9 @@
       "id": "go-007",
       "version": 1,
       "type": "code_reading",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Does this complete program terminate normally? Explain and suggest a structural fix.\n\n```go\npackage main\nimport \"fmt\"\nfunc main() {\n    jobs := make(chan int)\n    results := make(chan int)\n    go func() {\n        for j := range jobs { results <- j * 2 }\n        close(results)\n    }()\n    jobs <- 1\n    jobs <- 2\n    close(jobs)\n    for r := range results { fmt.Println(r) }\n}\n```",
@@ -251,7 +265,9 @@
       "id": "go-008",
       "version": 1,
       "type": "short_answer",
-      "topic": "Go concurrency",
+      "topics": [
+        "Go"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Design the shutdown sequence for a finite worker pool: one producer, several workers, and one result consumer. Who closes jobs and results, and why?",

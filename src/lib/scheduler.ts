@@ -36,7 +36,9 @@ export function learnsAhead(stored:StoredCard|undefined,now:Date):boolean {
   return !!stored&&(stored.state===State.Learning||stored.state===State.Relearning)&&Date.parse(stored.due)-now.getTime()<=LEARN_AHEAD_MS;
 }
 
-export const matchesFilters=(q:Question,settings:Settings)=>settings.topics.includes(q.topic)&&settings.types.includes(q.type);
+export const topicsOf=(bank:Bank)=>[...new Set(bank.questions.flatMap(q=>q.topics))];
+// A card with several topics matches if any of them is selected
+export const matchesFilters=(q:Question,settings:Settings)=>q.topics.some(topic=>settings.topics.includes(topic))&&settings.types.includes(q.type);
 
 export function dueToday(bank:Bank,store:Store,now:Date):string[] {
   const end=endOfLocalDay(now).getTime();
@@ -60,8 +62,8 @@ export function practiceQueue(bank:Bank,store:Store,settings:Settings,now:Date):
 export type TopicStats={topic:string;due:number;total:number};
 export function topicStats(bank:Bank,store:Store,now:Date):TopicStats[] {
   const due=new Set(dueToday(bank,store,now));
-  return [...new Set(bank.questions.map(q=>q.topic))].map(topic=>{
-    const keys=bank.questions.filter(q=>q.topic===topic).map(keyOfQuestion);
+  return topicsOf(bank).map(topic=>{
+    const keys=bank.questions.filter(q=>q.topics.includes(topic)).map(keyOfQuestion);
     return {topic,due:keys.filter(key=>due.has(key)).length,total:keys.length};
   });
 }

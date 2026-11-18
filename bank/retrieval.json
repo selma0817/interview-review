@@ -1,11 +1,13 @@
 {
-  "topic": "RAG",
+  "topic": "Retrieval",
   "questions": [
     {
       "id": "rag-001",
       "version": 1,
       "type": "single_choice",
-      "topic": "RAG",
+      "topics": [
+        "Retrieval"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "Why does Reciprocal Rank Fusion combine ranks rather than directly adding BM25 scores and embedding similarities?",
@@ -48,7 +50,9 @@
       "id": "rag-002",
       "version": 1,
       "type": "single_choice",
-      "topic": "RAG",
+      "topics": [
+        "Retrieval"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "A first-stage retriever omits the only relevant passage from its top-100. Can a reranker restricted to those 100 passages recover it?",
@@ -91,7 +95,9 @@
       "id": "rag-003",
       "version": 1,
       "type": "flashcard",
-      "topic": "RAG",
+      "topics": [
+        "Retrieval"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "Why combine sparse and dense retrieval?",
@@ -116,7 +122,9 @@
       "id": "rag-004",
       "version": 1,
       "type": "flashcard",
-      "topic": "RAG",
+      "topics": [
+        "Retrieval"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "How does a typical cross-encoder reranker differ from a bi-encoder retriever?",
@@ -141,7 +149,9 @@
       "id": "rag-005",
       "version": 1,
       "type": "short_answer",
-      "topic": "RAG",
+      "topics": [
+        "Retrieval"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "A CS-note search misses both exact error codes and paraphrased concepts. Propose a retrieval pipeline and explain how you would evaluate it.",

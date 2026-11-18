@@ -1,11 +1,13 @@
 {
-  "topic": "Database indexing",
+  "topic": "Database",
   "questions": [
     {
       "id": "db-001",
       "version": 1,
       "type": "single_choice",
-      "topic": "Database indexing",
+      "topics": [
+        "Database"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "An InnoDB table has PRIMARY KEY(id) and a secondary INDEX(email). Which query is covered by the secondary index's stored columns?",
@@ -48,7 +50,9 @@
       "id": "db-002",
       "version": 1,
       "type": "single_choice",
-      "topic": "Database indexing",
+      "topics": [
+        "Database"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "A table already has many indexes. What is the main tradeoff of adding another index for a read query?",
@@ -91,7 +95,9 @@
       "id": "db-003",
       "version": 1,
       "type": "flashcard",
-      "topic": "Database indexing",
+      "topics": [
+        "Database"
+      ],
       "difficulty": "easy",
       "created": "2026-11-05",
       "question": "What is a back-to-table lookup when using an InnoDB secondary index?",
@@ -116,7 +122,9 @@
       "id": "db-004",
       "version": 1,
       "type": "code_reading",
-      "topic": "Database indexing",
+      "topics": [
+        "Database"
+      ],
       "difficulty": "medium",
       "created": "2026-11-05",
       "question": "An InnoDB table has a regular B-tree index on a DATETIME column created_at, with no functional index. Rewrite this predicate as a half-open range for the same calendar day. Assume all values and literals use the same time convention.\n\n```sql\nSELECT id FROM events\nWHERE DATE(created_at) = '2026-11-04';\n```",

@@ -14,7 +14,7 @@ function RatingButtons({ratings,onRate}:{ratings:RatingOption[];onRate:(grade:Gr
 export const QuestionCard=forwardRef<HTMLHeadingElement,Props>(({q,visit,card,ratings,againIn,onVisit,onSubmit,onReveal,onRate,onNext},ref)=>{
   const correct=q.type==='single_choice'&&visit.selected===q.answer;
   return <article className="question-card">
-    <div className="badges"><span>{q.topic}</span><span>{TYPE_LABELS[q.type]}</span><span>{q.difficulty}</span></div>
+    <div className="badges">{q.topics.map(topic=><span key={topic}>{topic}</span>)}<span>{TYPE_LABELS[q.type]}</span><span>{q.difficulty}</span></div>
     {card&&card.reps>0&&<p className="question-history">Reviewed {card.reps} time{card.reps===1?'':'s'} · forgot {card.lapses}</p>}
     <h2 ref={ref} tabIndex={-1}>Question</h2><Markdown>{q.question}</Markdown>
     {q.type==='single_choice'?<>

@@ -4,7 +4,7 @@ export type Source = {path:string;heading:string;blob_sha:string;url:string};
 // 'not_run' only appears on cards migrated from v1; new cards pass every check that applies before they reach the bank
 export type CheckResult = 'pass'|'n/a'|'not_run';
 export type Checks = {grounded:CheckResult;blind_answer:CheckResult;code_run:CheckResult};
-export type CommonQuestion = {id:string;version:number;topic:string;difficulty:'easy'|'medium'|'hard';created:string;question:string;answer:string;explanation:string;sources:Source[];provenance:string;checks:Checks;rubric?:string[];extension_note?:string;code_language?:string};
+export type CommonQuestion = {id:string;version:number;topics:string[];difficulty:'easy'|'medium'|'hard';created:string;question:string;answer:string;explanation:string;sources:Source[];provenance:string;checks:Checks;rubric?:string[];extension_note?:string;code_language?:string};
 export type Question = CommonQuestion & ({type:'single_choice';options:{id:string;text:string}[]}|{type:'flashcard'|'code_reading'|'short_answer'});
 export type Bank = {schema_version:'2.0.0';built_at:string;questions:Question[]};
 // 1 Again · 2 Hard · 3 Good · 4 Easy, the same numbers as ts-fsrs Rating
