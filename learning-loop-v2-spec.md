@@ -1,7 +1,7 @@
 # Interview Review — v2 spec: the learning loop
 
 Date: 2026-11-13
-Status: **draft for approval**. No code is written until this is approved.
+Status: **approved 2026-11-13.** Phase 1 is complete: FSRS shipped 2026-11-13; deploy on push and `main` protection shipped 2026-11-18. Phases 2–4 are not started.
 Replaces the v1 parts about the setup screen, "needs review", completion, and how the bank is made (`cs-review-v1-spec.md`).
 
 ## 1. Goal
@@ -39,6 +39,7 @@ One loop for learning CS concepts and keeping them:
 | Correctness | Grounded + blind multiple-choice check + run the code, then your yes/no |
 | Card IDs | Assigned by a script, never reused |
 | Skills vs MCP | Skills plus scripts now. MCP only if shared state is ever needed |
+| Publishing (2026-11-17) | Cards reach `main` through one PR per session, never a direct push. `main` is protected (PR + green `checks` required), and every merge deploys automatically |
 
 ## 3. Where things live
 
@@ -167,7 +168,7 @@ Count per rating, plus when the next card is due.
   - Topic practice records ratings.
   - Run at desktop and mobile widths.
 
-### 5.8 Publishing on push: your CI/CD hands-on exercise
+### 5.8 Publishing on push: your CI/CD hands-on exercise ✅ done 2026-11-18
 
 Deploying on push turns the pipeline into continuous **deployment**: no human between green `main` and the live site. That makes the holes from our CI/CD rounds matter. You write this change and I review it. Acceptance criteria:
 
@@ -175,7 +176,12 @@ Deploying on push turns the pipeline into continuous **deployment**: no human be
 2. It deploys **the exact build that was tested**, not a fresh rebuild.
 3. Only `main` deploys, and the `pages` concurrency group stays.
 
-Until that's done, deploys stay manual.
+**Result** (PR #1, squash commit `be00445`):
+- `ci.yaml` runs on `pull_request` and `workflow_call`. Its last step packs the tested `dist/` with `upload-pages-artifact`, only when not on a PR (`github.event_name != 'pull_request'`). → criteria 1, 2
+- `deploy.yaml` runs on push to `main` and `workflow_dispatch`. Job `ci` calls `ci.yaml`; job `deploy` (`needs: ci`, `if: github.ref == 'refs/heads/main'`) only runs `configure-pages` + `deploy-pages`. → criteria 1, 2, 3
+- First automatic deploy: merge at 00:41:07 → live at 00:41:58 (Deploy run 44209837554).
+- `main` ruleset: PR required (0 approvals), required check `checks` from GitHub Actions, up to date, no deletion or force push, empty bypass list. A direct push to `main` was tried and rejected with `GH013`.
+- A second guard on deploying from other branches: the `github-pages` environment only allows `main`.
 
 ## 6. Phase 2 — Distill skill and bank scripts
 
@@ -227,7 +233,7 @@ Until that's done, deploys stay manual.
    3. **Code run:** the snippet is actually run (`go run`, `node`). A fragment gets a minimal harness. If it can't run (for example, it needs a cluster), it's marked `n/a` with a reason you can see.
 5. **Present** a numbered list. Each card shows its type, question, options/answer, explanation, source, session moment and check results.
 6. **You reply** `keep 1 3 4 · drop 2 · edit 5: …`. Edited cards re-run the checks.
-7. **Publish:** `bank:add` → `npm test` → commit `Add N cards: <session topic>` → push. I report what went live.
+7. **Publish:** on a new branch, `bank:add` → `npm test` → commit `Add N cards: <session topic>` → push the branch → open a PR. CI must pass (`main` is protected); you merge, and the merge deploys automatically. I report the PR link, and what went live after you merge.
 
 **Style guide (`style-guide.md`):**
 - Prefer failure scenarios ("what breaks if…") over definitions.
