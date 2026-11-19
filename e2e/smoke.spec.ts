@@ -1,4 +1,10 @@
 import {test,expect,type Page} from '@playwright/test';
+import {readFileSync} from 'node:fs';
+
+// Expected counts come from the bank this build serves, so adding cards doesn't break the test
+const bank=JSON.parse(readFileSync('dist/questions.json','utf8')) as {questions:{topics:string[]}[]};
+const total=bank.questions.length;
+const consensus=bank.questions.filter(q=>q.topics.includes('consensus')).length;
 
 // Answers whatever card is showing: the first option for multiple choice, Good for anything that asks
 async function answerCard(page:Page){
@@ -25,7 +31,7 @@ test('production prefix supports today\'s review, saved ratings, and topic pract
   await page.clock.setFixedTime(new Date(2026,10,14,10,0));
   await page.goto('./');
   await expect(page.getByRole('heading',{name:'Interview Concepts Review'})).toBeVisible();
-  await expect(page.getByText('30 cards in your bank.')).toBeVisible();
+  await expect(page.getByText(`${total} cards in your bank.`)).toBeVisible();
   const today=page.getByRole('region',{name:'Today'});
   await expect(today.getByText('Due',{exact:true}).locator('..')).toHaveText(/^\s*0\s*Due\s*$/);
   await expect(today.getByText('New',{exact:true}).locator('..')).toHaveText(/^\s*10\s*New\s*$/);
@@ -48,9 +54,9 @@ test('production prefix supports today\'s review, saved ratings, and topic pract
   const practice=page.getByRole('region',{name:'Practice a topic'});
   await practice.getByRole('button',{name:'Clear'}).first().click();
   await practice.getByLabel('consensus').check();
-  await practice.getByRole('button',{name:'Practice 5 cards'}).click();
-  await expect(page.getByText(/Practice · Card 1 of 5/)).toBeVisible();
+  await practice.getByRole('button',{name:`Practice ${consensus} cards`}).click();
+  await expect(page.getByText(`Practice · Card 1 of ${consensus}`)).toBeVisible();
   await answerCard(page);
-  await expect(page.getByText(/Practice · Card 2 of [56]/)).toBeVisible();
+  await expect(page.getByText(new RegExp(`Practice · Card 2 of (${consensus}|${consensus+1})`))).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>document.documentElement.clientWidth)).toBe(false);
 });
