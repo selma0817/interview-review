@@ -28,15 +28,13 @@ npm run dev
 
 Vite prints the development URL, normally `http://localhost:5173/interview-review/`. The repository-prefix path is intentional and matches GitHub Pages.
 
-Run all local checks:
+Run all local checks before pushing:
 
 ```bash
-npm run typecheck
-npm run bank:validate
-npm test
-npm run build
-npm run test:e2e
+npm run check
 ```
+
+`check` runs the same checks as CI, in the same order as `.github/workflows/ci.yaml`: typecheck, `bank:validate`, unit tests, build, then e2e on Chromium. It stops at the first failure. If you add a check to one of them, add it to the other too. `npm run test:e2e` on its own also runs the mobile project.
 
 Inspect the production build with:
 
