@@ -1,0 +1,359 @@
+{
+  "topic": "ci-cd",
+  "questions": [
+    {
+      "id": "ci-cd-92mnna",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "interview-review's old `deploy.yml` (verify → build → deploy; `verify` has no e2e) had no link to `ci.yml`, which runs e2e. You add only `push: branches: [main]` to `deploy.yml`. A merged commit breaks e2e, but Deploy's own jobs pass. What happens?",
+      "answer": "B",
+      "explanation": "The push triggers both workflows independently, and neither waits for the other, so CI's red e2e stops nothing; Deploy's own jobs pass, so the broken commit goes live. Deploying has to be linked to CI's success on purpose: call `ci.yaml` and `needs:` it, or use `workflow_run` plus a check that CI's conclusion was `success`. A describes that linked design.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Why an e2e-broken commit could go live in interview-review",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Task 1: you said the deploy wouldn't run, but that was the linked design, not the bare push trigger.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "Nothing deploys: CI goes red, so the deploy is skipped"
+        },
+        {
+          "id": "B",
+          "text": "The broken commit goes live: the push triggers both workflows independently, and Deploy never checks CI's result"
+        },
+        {
+          "id": "C",
+          "text": "Deploy starts, then fails as soon as CI goes red"
+        },
+        {
+          "id": "D",
+          "text": "Deploy waits for CI to finish, then is skipped"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-mgvrpl",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "Suppose interview-review's `ci.yaml` had both `pull_request` and `push: branches: [main]` triggers, and `deploy.yaml` (on push to `main`) called `ci.yaml` as a reusable workflow. You open one card PR, push nothing more to it, and merge it. How many times does CI's `checks` job run for that PR?",
+      "answer": "C",
+      "explanation": "A merge adds a commit to `main`, which is a push, so it triggers both `push: main` workflows: a standalone CI run, and Deploy, which runs `checks` again as a called workflow. That's 3 executions of `checks`: two standalone CI runs plus one inside the Deploy run. The last two test the same commit, which is why `ci.yaml` lost its push trigger.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Merging a PR is a push to main",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Q1: you thought merging a PR isn't a push to main.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "1: on the PR only, because merging a PR isn't a push"
+        },
+        {
+          "id": "B",
+          "text": "2: on the PR, and once inside the Deploy run"
+        },
+        {
+          "id": "C",
+          "text": "3: on the PR, in a standalone CI run on the merge's push, and inside the Deploy run"
+        },
+        {
+          "id": "D",
+          "text": "2: on the PR and on the merge's push; a called workflow doesn't run its jobs"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-zrtlvk",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "interview-review publishes to GitHub Pages with **GitHub Actions** as the publishing source, not a branch. A card file changes in the repo, but no deploy runs for a week. During that week, what does the live `questions.json` serve?",
+      "answer": "B",
+      "explanation": "With GitHub Actions as the source, Pages doesn't watch the repo: the live site serves what the last successful deploy uploaded, until a new deploy replaces it. Seen live: `last-modified` was the Nov 14 deploy, though the content last changed in git on Nov 5. (A branch source would publish on push, but this repo doesn't use one.)",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "GitHub Pages serves the last deploy, not the repo",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "You expected github.io to notice new card files by itself, like assets it tracks.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "The new cards: Pages notices changed files in the repo within minutes"
+        },
+        {
+          "id": "B",
+          "text": "The old cards: Pages serves what the last deploy uploaded, until the next deploy replaces it"
+        },
+        {
+          "id": "C",
+          "text": "The new cards: cards are data, not code, so they need no build or deploy"
+        },
+        {
+          "id": "D",
+          "text": "An error: the site refuses to serve files that no longer match the repo"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-2w5ub3",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "In interview-review's Deploy run, job `ci / checks` builds `dist/` and runs e2e against it on one GitHub-hosted runner, and job `deploy` publishes on another. Where should `upload-pages-artifact` (the step that packs the site for Pages) run?",
+      "answer": "B",
+      "explanation": "Each GitHub-hosted runner is a new virtual machine, so the checks job's `dist/` isn't on the deploy job's runner. The checks job packs the `dist/` that just passed e2e, and the deploy job publishes that artifact instead of rebuilding, so what was tested is what's deployed. C and D miss that `dist/` is gitignored and that Pages, with the Actions source, builds nothing.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Pack the artifact on the machine that ran e2e",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        },
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "GitHub Pages serves the last deploy, not the repo",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "You said the zip should only be made in deploy, not in CI.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "In the deploy job, after building `dist/` again: CI should only check, not package"
+        },
+        {
+          "id": "B",
+          "text": "At the end of the checks job, after e2e passes: the deploy job's runner doesn't have that `dist/`, and a rebuild there would be untested output"
+        },
+        {
+          "id": "C",
+          "text": "Nowhere: Pages builds the site from the repo by itself"
+        },
+        {
+          "id": "D",
+          "text": "In the deploy job, after `actions/checkout`, which brings the built `dist/` along"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-3etbz7",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-18",
+      "question": "`ci.yaml`'s pack step (`upload-pages-artifact`) has `if: github.event_name == 'push'`. Merges deploy fine. Then you click **Run workflow** on Deploy, branch `main`. Trace what happens, and give the fix.",
+      "answer": "`deploy.yaml` calls `ci.yaml`, and in a called workflow `github.event_name` is the caller's event, here `workflow_dispatch`. So CI passes but skips the pack step, and the deploy job has no artifact to publish. Fix: `if: github.event_name != 'pull_request'`, which is true for both `push` and `workflow_dispatch` and false on PRs.",
+      "explanation": "The pack step asks what started the run, not which branch. Which branch may deploy is a separate question, answered on the deploy job.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Why the pack step checks the event, not the branch",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Blank (A): you guessed the pack step should check whether the branch is main.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "n/a",
+        "code_run": "n/a"
+      },
+      "rubric": [
+        "in a called workflow, `github.event_name` is the caller's event (`workflow_dispatch` here)",
+        "CI passes but the pack step is skipped",
+        "the deploy job has no artifact to publish",
+        "fix: `!= 'pull_request'`, true for `push` and `workflow_dispatch`, false on PRs"
+      ],
+      "type": "short_answer"
+    },
+    {
+      "id": "ci-cd-p7i5lh",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "```yaml\n# deploy.yaml\njobs:\n  ci:\n    uses: ./.github/workflows/ci.yaml   # its only job is `checks`\n  deploy:\n    needs: ???\n```\nWhat goes in the deploy job's `needs:` so it waits for CI?",
+      "answer": "B",
+      "explanation": "`deploy.yaml` defines two jobs, `ci` and `deploy`. `checks` lives inside `ci.yaml`, so `needs: checks` names no job here, and `ci / checks` is only how the called job is reported. In ci_practice both jobs were named `verify`, which hid this.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "`needs:` names a job in the same file",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Blank (F): you wrote `needs: checks`.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "`checks`: the job that actually runs the tests"
+        },
+        {
+          "id": "B",
+          "text": "`ci`: `needs:` names a job in the same file"
+        },
+        {
+          "id": "C",
+          "text": "`ci / checks`: the name the run shows for that job"
+        },
+        {
+          "id": "D",
+          "text": "`ci.yaml`: the workflow being called"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-9yom8i",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-18",
+      "question": "In interview-review, `ci.yaml` runs by itself on PRs, and its job `checks` reports as `checks`. `deploy.yaml` calls `ci.yaml` from its job `ci`, and that run reports `ci / checks`; no workflow reports `ci / checks` on a PR. You mistakenly require `ci / checks` in the `main` ruleset. What happens to your next card PR?",
+      "answer": "B",
+      "explanation": "The ruleset waits for `ci / checks`, but the PR only reports `checks`, so the required check is never reported. GitHub's docs describe the same block for a required check whose workflow never runs: \"Waiting for status to be reported.\" Both names were seen in my repo's own check runs.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Protecting main with a ruleset",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Your first ruleset required `ci / checks`.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "It merges once `checks` is green: GitHub knows `checks` and `ci / checks` are the same job"
+        },
+        {
+          "id": "B",
+          "text": "It stays blocked: the required `ci / checks` is never reported on the PR, so Merge never turns on"
+        },
+        {
+          "id": "C",
+          "text": "It merges normally: required checks only apply to direct pushes, not to PRs"
+        },
+        {
+          "id": "D",
+          "text": "Its CI runs twice, once under each name, and Merge waits for both"
+        }
+      ]
+    },
+    {
+      "id": "ci-cd-w0act8",
+      "version": 1,
+      "topics": [
+        "ci-cd"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-18",
+      "question": "interview-review's `github-pages` environment is set in repo Settings to allow deployments only from `main`, and the deploy job uses `environment: github-pages`. On a feature branch, someone deletes only `if: github.ref == 'refs/heads/main'` from `deploy.yaml`, then clicks **Run workflow** on that branch. What stops the site from changing?",
+      "answer": "B",
+      "explanation": "The `if:` is a workflow guard, and the run uses that branch's copy of `deploy.yaml`, so it can be deleted there. The environment rule lives in repo Settings, which no branch's YAML can change (only a repo admin can), so it still applies to the deploy job. The ruleset doesn't help: it only controls what gets into `main`.",
+      "sources": [
+        {
+          "path": "Concepts/Software Engineering/DevOps/CI and CD.md",
+          "heading": "Two guards keep other branches off the site",
+          "blob_sha": "62c7e33625d71e0be8f74e2833fd98783332d034",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/143381db173cddb178905393c91843951040f369/Concepts/Software%20Engineering/DevOps/CI%20and%20CD.md"
+        }
+      ],
+      "provenance": "Q3: you weren't sure what stops the Run workflow button from deploying another branch.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "n/a"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "The `main` ruleset: changes must arrive through a PR"
+        },
+        {
+          "id": "B",
+          "text": "The environment's deployment branch rule, which doesn't let that branch deploy to `github-pages`"
+        },
+        {
+          "id": "C",
+          "text": "Nothing: the deleted `if:` was the only guard, so the site changes"
+        },
+        {
+          "id": "D",
+          "text": "CI: it fails on any branch other than `main`"
+        }
+      ]
+    }
+  ]
+}
