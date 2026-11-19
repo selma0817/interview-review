@@ -4,3 +4,6 @@ playwright-report/
 test-results/
 .DS_Store
 public/questions.json
+
+# Draft cards from the distill skill (vault .agents/skills/distill); bank:add turns them into bank/ cards
+.drafts/
