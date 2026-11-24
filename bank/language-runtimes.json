@@ -1,0 +1,323 @@
+{
+  "topic": "language-runtimes",
+  "questions": [
+    {
+      "id": "language-runtimes-cxcuzc",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-23",
+      "question": "`go.mod` says `go 1.21`. What does this print, and why?\n```go\npackage main\n\nimport \"fmt\"\n\nfunc main() {\n\tvar fs []func()\n\tfor i := 0; i < 3; i++ {\n\t\tfs = append(fs, func() { fmt.Print(i, \" \") })\n\t}\n\tfor _, f := range fs {\n\t\tf()\n\t}\n}\n```",
+      "answer": "`3 3 3`. Under Go 1.21 the loop has one `i`, set to 0, 1, 2, then 3 by the last `i++`. All three closures share that variable, and they run after the loop, so they all read 3. With `go 1.22` or later in `go.mod` it prints `0 1 2`: each iteration gets a new variable.",
+      "explanation": "The trap is believing a closure takes `i`'s value when it's created; it holds the variable itself. Fixes under 1.21: `i := i` in the body, or pass `i` as an argument.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Before Go 1.22, every loop iteration shared one variable",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        },
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Mistake 1: thinking a closure copies a variable's value when it's created (mine)",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You predicted `0 1 2` here: \"i is evaluated in the for loop\".",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "n/a",
+        "code_run": "pass"
+      },
+      "code_language": "go",
+      "type": "code_reading"
+    },
+    {
+      "id": "language-runtimes-tes6we",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-23",
+      "question": "Returning the address of a local variable (`return &x`) compiles in both C and Go. Why is it a bug in C but safe in Go?",
+      "answer": "B",
+      "explanation": "A stack frame is released when its function returns and reused by the next call; the garbage collector never manages it. A dangling pointer then reads another call's data (the C demo printed 999), and writing through it crashed. That's the opposite of a leak, which is memory freed too late, or never.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Why a stack variable can't outlive its function",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You called it a memory leak, and said the garbage collector would clean up the stack frame.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "pass"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "In C it's a memory leak, because the stack frame is never freed; Go's garbage collector frees it"
+        },
+        {
+          "id": "B",
+          "text": "In C the stack frame is released on return and reused by the next call, so the pointer dangles; Go's escape analysis puts `x` on the heap first"
+        },
+        {
+          "id": "C",
+          "text": "In C the garbage collector clears the stack frame on return; Go's collector waits until the pointer is gone"
+        },
+        {
+          "id": "D",
+          "text": "In C the pointer becomes nil on return; Go stores a copy of `x` inside the pointer"
+        }
+      ]
+    },
+    {
+      "id": "language-runtimes-dwg27m",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-23",
+      "question": "```go\nfunc e() *int { x := 5; return &x }\n```\nThe caller only ever reads `*p`; nothing changes `x` after `e` returns. Does the compiler move `x` to the heap?",
+      "answer": "B",
+      "explanation": "Escape analysis asks whether a variable can be referenced after its function returns, not whether it's modified: `go build -gcflags='-m -l'` prints `moved to heap: x`. Only a closure may copy a never-reassigned variable instead of moving it.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Captured variables move to the heap when they outlive their function",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You said `x` moves to the heap because it \"can still be modified\" after return.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "pass"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "No: nothing modifies `x` after return, so it can stay in `e`'s stack frame"
+        },
+        {
+          "id": "B",
+          "text": "Yes: `x` can still be referenced after `e` returns, and reading counts"
+        },
+        {
+          "id": "C",
+          "text": "No: Go copies `x`'s value into the returned pointer"
+        },
+        {
+          "id": "D",
+          "text": "Only if the caller later writes through the pointer"
+        }
+      ]
+    },
+    {
+      "id": "language-runtimes-lyrfl1",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-23",
+      "question": "```go\nfunc parsePort(s string) (int, error) {\n\tport := 8080\n\tvar err error\n\tif s != \"\" {\n\t\tport, err := strconv.Atoi(s)\n\t\tif err != nil {\n\t\t\tfmt.Println(\"  log: bad port:\", err)\n\t\t}\n\t\tfmt.Println(\"  log: parsed\", port)\n\t}\n\treturn port, err\n}\n```\nA caller does `port, err := parsePort(input)` and stops if `err != nil`. What happens when `input` is `\"abc\"`?",
+      "answer": "B",
+      "explanation": "`port, err :=` inside the `if` declares a new port and err that shadow the outer ones, so the error and the parsed value never leave the block. The outer `err` keeps its zero value, nil, and `go vet` reports nothing. Fix: `port, err = strconv.Atoi(s)`.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Shadowing silently drops errors and values",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You weren't sure what the caller concludes, and guessed it returns \"invalid syntax\".",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "pass"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "The caller gets strconv's \"invalid syntax\" error and stops"
+        },
+        {
+          "id": "B",
+          "text": "parsePort returns 8080 and nil, so the caller carries on with port 8080"
+        },
+        {
+          "id": "C",
+          "text": "parsePort returns 0 and nil, the value Atoi produced"
+        },
+        {
+          "id": "D",
+          "text": "It doesn't compile, because `port` and `err` are declared twice"
+        }
+      ]
+    },
+    {
+      "id": "language-runtimes-q6uocz",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "hard",
+      "created": "2026-11-23",
+      "question": "Under `go 1.21`, a loop starts three goroutines that each print the shared loop variable `i`. To fix the data race, you lock a mutex around the loop's `i++` and around each goroutine's read of `i`. `go run -race` is now clean. What does it print?",
+      "answer": "B",
+      "explanation": "The lock makes the write and the reads take turns but doesn't control their order. A data race is about accesses overlapping; correctness is about each goroutine getting the value you meant, which takes a copy per goroutine.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Race-free is not the same as correct",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You suggested \"some form of mutex\" as the second fix.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "pass",
+        "code_run": "pass"
+      },
+      "type": "single_choice",
+      "options": [
+        {
+          "id": "A",
+          "text": "0, 1 and 2 in some order: with the race gone, each goroutine reads its own iteration's value"
+        },
+        {
+          "id": "B",
+          "text": "Usually `3 3 3`: the reads no longer overlap the write, but every goroutine still reads the one shared `i`, usually after the loop"
+        },
+        {
+          "id": "C",
+          "text": "Nothing: the goroutines deadlock waiting for main's lock"
+        },
+        {
+          "id": "D",
+          "text": "`0 1 2` in that order: the mutex makes the goroutines run in the order they were started"
+        }
+      ]
+    },
+    {
+      "id": "language-runtimes-n7d958",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-23",
+      "question": "What does this print, in order?\n```go\npackage main\n\nimport \"fmt\"\n\nfunc tick(n int) int {\n\tfmt.Println(\"tick\", n)\n\treturn n\n}\n\nfunc main() {\n\tdefer fmt.Println(\"A\", tick(1))\n\tdefer fmt.Println(\"B\", tick(2))\n\tfmt.Println(\"body\")\n}\n```",
+      "answer": "`tick 1`, `tick 2`, `body`, `B 2`, `A 1`. Each `defer` line evaluates its arguments right away, function calls included, and saves the call. At return the saved calls run in reverse order.",
+      "explanation": "Go spec, \"Defer statements\": the function value and parameters \"are evaluated as usual and saved anew but the actual function is not invoked\"; deferred functions run \"in the reverse order they were deferred\".",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "A deferred call evaluates its arguments now and runs at return",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You thought deferred calls run in the order written and read their arguments at return.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "n/a",
+        "code_run": "pass"
+      },
+      "code_language": "go",
+      "type": "code_reading"
+    },
+    {
+      "id": "language-runtimes-oyhu2x",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-23",
+      "question": "This prints something like `work took 8.208µs`, not about 100 ms. Why? Give the one-line fix.\n```go\npackage main\n\nimport (\n\t\"fmt\"\n\t\"time\"\n)\n\nfunc work() {\n\tstart := time.Now()\n\tdefer fmt.Println(\"work took\", time.Since(start))\n\ttime.Sleep(100 * time.Millisecond)\n}\n\nfunc main() {\n\twork()\n}\n```",
+      "answer": "`time.Since(start)` is an argument of the deferred call, so it runs when the `defer` line runs, before the sleep. Fix: `defer func() { fmt.Println(\"work took\", time.Since(start)) }()`, so the closure's body calls `time.Since` at return (about 101 ms).",
+      "explanation": "Passing `time.Since(start)` into a deferred closure as an argument doesn't help (15.125µs): arguments are always evaluated at the `defer` line.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "Timing with `defer` needs a closure",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You said the defer is evaluated after the sleep, and your fix passed `time.Since(start)` as the closure's argument.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "n/a",
+        "code_run": "pass"
+      },
+      "rubric": [
+        "`time.Since(start)` is evaluated when the defer line runs, before the sleep",
+        "fix: call `time.Since(start)` inside a deferred closure's body",
+        "passing it as the closure's argument still measures too early"
+      ],
+      "type": "short_answer"
+    },
+    {
+      "id": "language-runtimes-72dorh",
+      "version": 1,
+      "topics": [
+        "language-runtimes",
+        "concurrency",
+        "go"
+      ],
+      "difficulty": "medium",
+      "created": "2026-11-23",
+      "question": "What does this print, and why do the two results differ?\n```go\npackage main\n\nimport \"fmt\"\n\nfunc f() (n int) {\n\tdefer func() { n *= 2 }()\n\treturn 3\n}\n\nfunc g() int {\n\tn := 3\n\tdefer func() { n *= 2 }()\n\treturn n\n}\n\nfunc main() {\n\tfmt.Println(\"f() =\", f())\n\tfmt.Println(\"g() =\", g())\n}\n```",
+      "answer": "`f() = 6`, `g() = 3`. In `f`, `n` is a named result: `return 3` sets it, the deferred closure doubles it, then `f` returns it. In `g` the result has no name: `return n` copies 3 out first, and the closure then doubles a local that is no longer the result.",
+      "explanation": "`func f() (n int)` takes no input: the first `()` is the empty parameter list, and `(n int)` is a named result. Deferred functions run after the return statement sets the result parameters, and before the function returns.",
+      "sources": [
+        {
+          "path": "Concepts/Programming Languages/Go/Go Closures.md",
+          "heading": "A deferred closure can change a named result",
+          "blob_sha": "714701dba05c8c2421bffb9e2ccc6669f4e58480",
+          "url": "https://github.com/selma0817/cs-knowledge-base/blob/ecd9106677aeba9a7c65c0eb903ccc5e56243f8e/Concepts/Programming%20Languages/Go/Go%20Closures.md"
+        }
+      ],
+      "provenance": "You read `func f() (n int)` as taking an input, and predicted `g()` returns 6.",
+      "checks": {
+        "grounded": "pass",
+        "blind_answer": "n/a",
+        "code_run": "pass"
+      },
+      "code_language": "go",
+      "type": "code_reading"
+    }
+  ]
+}
